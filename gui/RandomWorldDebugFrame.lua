@@ -1,99 +1,98 @@
 -- =========================================================
--- Random World Events (version 2.0.0.0) - FS25
--- =========================================================
--- Debug frame for FS25
--- =========================================================
+-- Random World Events (version 2.0.0.1) - FS25
+-- Physics / Debug frame
 -- Author: TisonK
 -- =========================================================
 
 ---@class RandomWorldEventsDebugFrame
 RandomWorldEventsDebugFrame = {}
-
 local RandomWorldEventsDebugFrame_mt = Class(RandomWorldEventsDebugFrame, TabbedMenuFrameElement)
-
-RandomWorldEventsDebugFrame.CONTROLS = {
-    'physicsEnabled',
-    'wheelGripMultiplier',
-    'articulationDamping',
-    'comStrength',
-    'suspensionStiffness',
-    'showPhysicsInfo',
-    'debugMode',
-    'boxLayout'
-}
 
 function RandomWorldEventsDebugFrame.new(target, customMt)
     local self = TabbedMenuFrameElement.new(target, customMt or RandomWorldEventsDebugFrame_mt)
-    self:registerControls(RandomWorldEventsDebugFrame.CONTROLS)
     return self
 end
 
+-- Called by RandomWorldEventsScreen:onGuiSetupFinished after pages are wired.
 function RandomWorldEventsDebugFrame:initialize()
-    self.backButtonInfo = {
-        inputAction = InputAction.MENU_BACK
-    }
+    self.backButtonInfo = { inputAction = InputAction.MENU_BACK }
+
+    -- FS25: registerControls not available on TabbedMenuFrameElement; wire by element name
+    self.boxLayout           = self:getDescendantByName("boxLayout")
+    self.physicsEnabled      = self:getDescendantByName("physicsEnabled")
+    self.wheelGripMultiplier = self:getDescendantByName("wheelGripMultiplier")
+    self.articulationDamping = self:getDescendantByName("articulationDamping")
+    self.comStrength         = self:getDescendantByName("comStrength")
+    self.suspensionStiffness = self:getDescendantByName("suspensionStiffness")
+    self.showPhysicsInfo     = self:getDescendantByName("showPhysicsInfo")
+    self.debugMode           = self:getDescendantByName("debugMode")
 end
 
 function RandomWorldEventsDebugFrame:onFrameOpen()
     RandomWorldEventsDebugFrame:superClass().onFrameOpen(self)
-    self:updateRandomEvents()
+
+    if not self.boxLayout then
+        Logging.warning("[RWE] DebugFrame: boxLayout not found, skipping open setup")
+        return
+    end
+
+    self:updateDisplay()
     self.boxLayout:invalidateLayout()
 
     if FocusManager:getFocusedElement() == nil then
-        self:setSoundSuppressed(true)
+        if self.setSoundSuppressed then self:setSoundSuppressed(true) end
         FocusManager:setFocus(self.boxLayout)
-        self:setSoundSuppressed(false)
+        if self.setSoundSuppressed then self:setSoundSuppressed(false) end
     end
 end
 
-function RandomWorldEventsDebugFrame:updateRandomEvents()
+function RandomWorldEventsDebugFrame:updateDisplay()
     if not g_RandomWorldEvents then return end
-    
-    self.physicsEnabled:setIsChecked(g_RandomWorldEvents.physics.enabled)
-    self.showPhysicsInfo:setIsChecked(g_RandomWorldEvents.physics.showPhysicsInfo)
-    self.debugMode:setIsChecked(g_RandomWorldEvents.physics.debugMode)
+    local ph = g_RandomWorldEvents.physics
 
-    self:setElementText(self.wheelGripMultiplier, g_RandomWorldEvents.physics.wheelGripMultiplier)
-    self:setElementText(self.articulationDamping, g_RandomWorldEvents.physics.articulationDamping)
-    self:setElementText(self.comStrength, g_RandomWorldEvents.physics.comStrength)
-    self:setElementText(self.suspensionStiffness, g_RandomWorldEvents.physics.suspensionStiffness)
+    if self.physicsEnabled  then self.physicsEnabled:setIsChecked(ph.enabled) end
+    if self.showPhysicsInfo then self.showPhysicsInfo:setIsChecked(ph.showPhysicsInfo) end
+    if self.debugMode       then self.debugMode:setIsChecked(ph.debugMode) end
+
+    if self.wheelGripMultiplier  then self.wheelGripMultiplier:setText(string.format('%.2f', ph.wheelGripMultiplier))   end
+    if self.articulationDamping  then self.articulationDamping:setText(string.format('%.2f', ph.articulationDamping))   end
+    if self.comStrength          then self.comStrength:setText(string.format('%.2f', ph.comStrength))                   end
+    if self.suspensionStiffness  then self.suspensionStiffness:setText(string.format('%.2f', ph.suspensionStiffness))   end
 end
 
-function RandomWorldEventsDebugFrame:setElementText(element, value)
-    element:setText(string.format('%.2f', value))
-end
-
+-- onClick callback for all checkedOption toggles
 ---@param state number
 ---@param element CheckedOptionElement
 function RandomWorldEventsDebugFrame:onCheckClick(state, element)
     if not g_RandomWorldEvents then return end
-    
-    local value = state == CheckedOptionElement.STATE_CHECKED
-    g_RandomWorldEvents.physics[element.id] = value
-    
-    if g_RandomWorldEvents.saveSettings then
-        g_RandomWorldEvents:saveSettings()
+
+    local checked = (state == CheckedOptionElement.STATE_CHECKED)
+    local id = element.id or element.name
+
+    if id then
+        g_RandomWorldEvents.physics[id] = checked
     end
-    
-    Logging.info("[RWE] Physics setting changed: " .. element.id .. " = " .. tostring(value))
+
+    g_RandomWorldEvents:saveSettings()
+    Logging.info("[RWE] Physics toggle: " .. tostring(id) .. " = " .. tostring(checked))
 end
 
+-- onEnterPressed callback for numeric text inputs
 ---@param element TextInputElement
 function RandomWorldEventsDebugFrame:onEnterPressedTextInput(element)
     if not g_RandomWorldEvents then return end
-    
+
+    local id = element.id or element.name
     local value = tonumber(element.text)
+
     if value ~= nil then
-        if value < 0.1 then value = 0.1 end
-        if value > 5.0 then value = 5.0 end
-        g_RandomWorldEvents.physics[element.id] = value
+        value = math.max(0.1, math.min(5.0, value))
+        g_RandomWorldEvents.physics[id] = value
+    else
+        value = g_RandomWorldEvents.physics[id]
     end
 
-    self:setElementText(element, g_RandomWorldEvents.physics[element.id])
-    
-    if g_RandomWorldEvents.saveSettings then
-        g_RandomWorldEvents:saveSettings()
-    end
-    
-    Logging.info("[RWE] Physics value changed: " .. element.id .. " = " .. tostring(value))
+    element:setText(string.format('%.2f', value))
+    g_RandomWorldEvents:saveSettings()
+    Logging.info("[RWE] Physics value: " .. tostring(id) .. " = " .. tostring(value))
 end

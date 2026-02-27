@@ -5,7 +5,6 @@
 
         <!-- Page header -->
         <GuiElement type="empty" profile="ingameMenuFrameHeaderPanel">
-            <GuiElement type="bitmap" profile="ingameMenuGeneralSettingsHeaderIcon" />
             <GuiElement type="text" profile="ingameMenuFrameHeaderText" text="Random World Events" />
         </GuiElement>
 
@@ -14,30 +13,30 @@
 
             <!-- Enable Events -->
             <GuiElement type="checkedOption" profile="multiTextOptionSettings" onClick="onCheckClick" id="eventsEnabled">
-                <GuiElement type="button" profile="multiTextOptionSettingsLeft" />
-                <GuiElement type="button" profile="multiTextOptionSettingsRight" />
-                <GuiElement type="text" profile="multiTextOptionSettingsText" />
+                <GuiElement type="button" profile="rwe_multiTextOptionSettingsLeft" />
+                <GuiElement type="button" profile="rwe_multiTextOptionSettingsRight" />
+                <GuiElement type="text" profile="rwe_textDefault" />
                 <GuiElement type="text" profile="multiTextOptionSettingsTitle" text="Enable Random Events" />
                 <GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
                 <GuiElement type="text" profile="multiTextOptionSettingsTooltip" text="Enable or disable all random world events" />
             </GuiElement>
 
             <!-- Frequency -->
-            <GuiElement type="textInput" profile="ingameMenuGameSettingsTextInput" id="eventsFrequency"
+            <GuiElement type="textInput" profile="rwe_ingameMenuGameSettingsTextInput" id="eventsFrequency"
                         onEnterPressed="onEnterPressedTextInput" imeDescription="1-10" imePlaceholder="Frequency"
                         imeTitle="Event Frequency" imeKeyboardType="normal" />
             <GuiElement type="text" profile="multiTextOptionSettingsTitle" text="Event Frequency (1-10)" />
             <GuiElement type="text" profile="multiTextOptionSettingsTooltip" text="How often events occur (1=rare, 10=often)" />
 
             <!-- Intensity -->
-            <GuiElement type="textInput" profile="ingameMenuGameSettingsTextInput" id="eventsIntensity"
+            <GuiElement type="textInput" profile="rwe_ingameMenuGameSettingsTextInput" id="eventsIntensity"
                         onEnterPressed="onEnterPressedTextInput" imeDescription="1-5" imePlaceholder="Intensity"
                         imeTitle="Event Intensity" imeKeyboardType="normal" />
             <GuiElement type="text" profile="multiTextOptionSettingsTitle" text="Event Intensity (1-5)" />
             <GuiElement type="text" profile="multiTextOptionSettingsTooltip" text="How strong events are (1=mild, 5=extreme)" />
 
             <!-- Cooldown -->
-            <GuiElement type="textInput" profile="ingameMenuGameSettingsTextInput" id="eventsCooldown"
+            <GuiElement type="textInput" profile="rwe_ingameMenuGameSettingsTextInput" id="eventsCooldown"
                         onEnterPressed="onEnterPressedTextInput" imeDescription="Minutes" imePlaceholder="Cooldown"
                         imeTitle="Event Cooldown" imeKeyboardType="normal" />
             <GuiElement type="text" profile="multiTextOptionSettingsTitle" text="Event Cooldown (minutes)" />
@@ -45,9 +44,9 @@
 
             <!-- Notifications -->
             <GuiElement type="checkedOption" profile="multiTextOptionSettings" onClick="onCheckClick" id="showNotifications">
-                <GuiElement type="button" profile="multiTextOptionSettingsLeft" />
-                <GuiElement type="button" profile="multiTextOptionSettingsRight" />
-                <GuiElement type="text" profile="multiTextOptionSettingsText" />
+                <GuiElement type="button" profile="rwe_multiTextOptionSettingsLeft" />
+                <GuiElement type="button" profile="rwe_multiTextOptionSettingsRight" />
+                <GuiElement type="text" profile="rwe_textDefault" />
                 <GuiElement type="text" profile="multiTextOptionSettingsTitle" text="Show Notifications" />
                 <GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
                 <GuiElement type="text" profile="multiTextOptionSettingsTooltip" text="Show event notifications" />
@@ -55,9 +54,9 @@
 
             <!-- Warnings -->
             <GuiElement type="checkedOption" profile="multiTextOptionSettings" onClick="onCheckClick" id="showWarnings">
-                <GuiElement type="button" profile="multiTextOptionSettingsLeft" />
-                <GuiElement type="button" profile="multiTextOptionSettingsRight" />
-                <GuiElement type="text" profile="multiTextOptionSettingsText" />
+                <GuiElement type="button" profile="rwe_multiTextOptionSettingsLeft" />
+                <GuiElement type="button" profile="rwe_multiTextOptionSettingsRight" />
+                <GuiElement type="text" profile="rwe_textDefault" />
                 <GuiElement type="text" profile="multiTextOptionSettingsTitle" text="Show Warnings" />
                 <GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
                 <GuiElement type="text" profile="multiTextOptionSettingsTooltip" text="Show warning notifications" />
@@ -67,61 +66,61 @@
 
             <!-- Event Categories -->
             <GuiElement type="checkedOption" profile="multiTextOptionSettings" onClick="onCheckClick" id="weatherEvents">
-                <GuiElement type="button" profile="multiTextOptionSettingsLeft" />
-                <GuiElement type="button" profile="multiTextOptionSettingsRight" />
-                <GuiElement type="text" profile="multiTextOptionSettingsText" />
+                <GuiElement type="button" profile="rwe_multiTextOptionSettingsLeft" />
+                <GuiElement type="button" profile="rwe_multiTextOptionSettingsRight" />
+                <GuiElement type="text" profile="rwe_textDefault" />
                 <GuiElement type="text" profile="multiTextOptionSettingsTitle" text="Weather Events" />
                 <GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
                 <GuiElement type="text" profile="multiTextOptionSettingsTooltip" text="Enable weather-related events" />
             </GuiElement>
 
             <GuiElement type="checkedOption" profile="multiTextOptionSettings" onClick="onCheckClick" id="economicEvents">
-                <GuiElement type="button" profile="multiTextOptionSettingsLeft" />
-                <GuiElement type="button" profile="multiTextOptionSettingsRight" />
-                <GuiElement type="text" profile="multiTextOptionSettingsText" />
+                <GuiElement type="button" profile="rwe_multiTextOptionSettingsLeft" />
+                <GuiElement type="button" profile="rwe_multiTextOptionSettingsRight" />
+                <GuiElement type="text" profile="rwe_textDefault" />
                 <GuiElement type="text" profile="multiTextOptionSettingsTitle" text="Economic Events" />
                 <GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
                 <GuiElement type="text" profile="multiTextOptionSettingsTooltip" text="Enable economy-related events" />
             </GuiElement>
 
             <GuiElement type="checkedOption" profile="multiTextOptionSettings" onClick="onCheckClick" id="vehicleEvents">
-                <GuiElement type="button" profile="multiTextOptionSettingsLeft" />
-                <GuiElement type="button" profile="multiTextOptionSettingsRight" />
-                <GuiElement type="text" profile="multiTextOptionSettingsText" />
+                <GuiElement type="button" profile="rwe_multiTextOptionSettingsLeft" />
+                <GuiElement type="button" profile="rwe_multiTextOptionSettingsRight" />
+                <GuiElement type="text" profile="rwe_textDefault" />
                 <GuiElement type="text" profile="multiTextOptionSettingsTitle" text="Vehicle Events" />
                 <GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
                 <GuiElement type="text" profile="multiTextOptionSettingsTooltip" text="Enable vehicle-related events" />
             </GuiElement>
 
             <GuiElement type="checkedOption" profile="multiTextOptionSettings" onClick="onCheckClick" id="fieldEvents">
-                <GuiElement type="button" profile="multiTextOptionSettingsLeft" />
-                <GuiElement type="button" profile="multiTextOptionSettingsRight" />
-                <GuiElement type="text" profile="multiTextOptionSettingsText" />
+                <GuiElement type="button" profile="rwe_multiTextOptionSettingsLeft" />
+                <GuiElement type="button" profile="rwe_multiTextOptionSettingsRight" />
+                <GuiElement type="text" profile="rwe_textDefault" />
                 <GuiElement type="text" profile="multiTextOptionSettingsTitle" text="Field Events" />
                 <GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
                 <GuiElement type="text" profile="multiTextOptionSettingsTooltip" text="Enable field-related events" />
             </GuiElement>
 
             <GuiElement type="checkedOption" profile="multiTextOptionSettings" onClick="onCheckClick" id="wildlifeEvents">
-                <GuiElement type="button" profile="multiTextOptionSettingsLeft" />
-                <GuiElement type="button" profile="multiTextOptionSettingsRight" />
-                <GuiElement type="text" profile="multiTextOptionSettingsText" />
+                <GuiElement type="button" profile="rwe_multiTextOptionSettingsLeft" />
+                <GuiElement type="button" profile="rwe_multiTextOptionSettingsRight" />
+                <GuiElement type="text" profile="rwe_textDefault" />
                 <GuiElement type="text" profile="multiTextOptionSettingsTitle" text="Wildlife Events" />
                 <GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
                 <GuiElement type="text" profile="multiTextOptionSettingsTooltip" text="Enable wildlife-related events" />
             </GuiElement>
 
             <GuiElement type="checkedOption" profile="multiTextOptionSettings" onClick="onCheckClick" id="specialEvents">
-                <GuiElement type="button" profile="multiTextOptionSettingsLeft" />
-                <GuiElement type="button" profile="multiTextOptionSettingsRight" />
-                <GuiElement type="text" profile="multiTextOptionSettingsText" />
+                <GuiElement type="button" profile="rwe_multiTextOptionSettingsLeft" />
+                <GuiElement type="button" profile="rwe_multiTextOptionSettingsRight" />
+                <GuiElement type="text" profile="rwe_textDefault" />
                 <GuiElement type="text" profile="multiTextOptionSettingsTitle" text="Special Events" />
                 <GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
                 <GuiElement type="text" profile="multiTextOptionSettingsTooltip" text="Enable special events" />
             </GuiElement>
 
             <!-- Trigger Event Button -->
-            <GuiElement type="button" profile="ingameMenuSettingsPauseButton" id="triggerEventButton"
+            <GuiElement type="button" profile="buttonActivate" id="triggerEventButton"
                         text="Trigger Random Event" onClick="onTriggerEventClick" />
             <GuiElement type="text" profile="multiTextOptionSettingsTooltip"
                         text="Manually trigger a random event (for testing)" />

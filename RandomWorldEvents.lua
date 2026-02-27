@@ -1,5 +1,5 @@
 -- =========================================================
--- Random World Events (version 2.0.0.1) - FS25 Conversion
+-- Random World Events (version 2.0.0.2) - FS25 Conversion
 -- =========================================================
 -- Random events that can occur. Settings can be changed!
 -- =========================================================
@@ -538,13 +538,9 @@ function RandomWorldEvents:consoleCommandList(category)
     return string.format("Listed %d events", total)
 end
 
--- Open the settings screen programmatically.
+-- Settings are now in ESC > Settings > Random World Events.
 function RandomWorldEvents:consoleCommandSettings()
-    if g_gui then
-        g_gui:showGui("RandomWorldEventsScreen")
-        return "Opening settings screen"
-    end
-    return "GUI not available"
+    return "Settings: open ESC > Settings and scroll to 'Random World Events'"
 end
 
 -- =====================
@@ -578,54 +574,9 @@ end
 -- =====================
 
 function RandomWorldEvents:loadGUI()
-    Logging.info("[RWE] Starting GUI loading...")
-    
-    -- First, load the GUI Lua files
-    local guiFiles = {
-        "gui/RandomWorldEventsScreen.lua",
-        "gui/RandomWorldEventsFrame.lua",
-        "gui/RandomWorldDebugFrame.lua"
-    }
-    
-    for _, guiFile in ipairs(guiFiles) do
-        local filePath = Utils.getFilename(guiFile, self.modDirectory)
-        if fileExists(filePath) then
-            source(filePath)
-            Logging.info("[RandomWorldEvents] Loaded GUI file: " .. guiFile)
-        else
-            Logging.error("[RandomWorldEvents] GUI file not found: " .. filePath)
-        end
-    end
-    
-    -- Load GUI profiles
-    local profilesPath = Utils.getFilename("guiProfiles.xml", self.modDirectory)
-    if fileExists(profilesPath) then
-        g_gui:loadProfiles(profilesPath)
-        Logging.info("[RWE] GUI profiles loaded")
-    else
-        Logging.error("[RWE] GUI profiles not found: " .. profilesPath)
-    end
-    
-    -- Register screen classes if they exist
-    if RandomWorldEventsScreen then
-        g_gui:loadGui(Utils.getFilename("xml/RandomWorldEventsScreen.xml", self.modDirectory), 
-                     "RandomWorldEventsScreen", RandomWorldEventsScreen)
-        Logging.info("[RWE] RandomWorldEventsScreen registered")
-    end
-    
-    if RandomWorldEventsFrame then
-        g_gui:loadGui(Utils.getFilename("xml/RandomWorldEventsFrame.xml", self.modDirectory), 
-                     "RandomWorldEventsFrame", RandomWorldEventsFrame)
-        Logging.info("[RWE] RandomWorldEventsFrame registered")
-    end
-    
-    if RandomWorldEventsDebugFrame then
-        g_gui:loadGui(Utils.getFilename("xml/RandomWorldDebugFrame.xml", self.modDirectory), 
-                     "RandomWorldDebugFrame", RandomWorldEventsDebugFrame)
-        Logging.info("[RWE] RandomWorldDebugFrame registered")
-    end
-    
-    Logging.info("[RWE] GUI loading complete")
+    -- Settings are injected into ESC > Settings via RWESettingsIntegration (hooks pattern).
+    -- No custom screen registration needed.
+    Logging.info("[RWE] GUI ready (settings via InGameMenuSettingsFrame hook)")
 end
 
 -- =====================
@@ -651,10 +602,7 @@ local function load(mission)
         
         -- Now load event modules (they need g_RandomWorldEvents to exist)
         rweManager:loadEventModules()
-        
-        -- Load GUI
-        rweManager:loadGUI()
-        
+
         -- Mark as initialized
         rweManager.isInitialized = true
         
@@ -688,17 +636,28 @@ end
 local function keyEvent(unicode, sym, modifier, isDown)
     if not isDown or not rweManager then return end
 
-    if sym == 284 then -- F3 — open settings screen
-        if g_gui then
-            g_gui:showGui("RandomWorldEventsScreen")
+    if sym == 284 then -- F3 — hint: settings are in ESC > Settings
+        if g_currentMission then
+            g_currentMission:addIngameNotification(
+                FSBaseMission.INGAME_NOTIFICATION_INFO,
+                "RWE: Open ESC > Settings to configure Random World Events"
+            )
         end
     elseif sym == 290 then -- F9 — force-trigger a random event
         rweManager:triggerRandomEvent()
     end
 end
 
+local function loadFinished(mission, ...)
+    if rweManager and not rweManager.guiLoaded then
+        rweManager:loadGUI()
+        rweManager.guiLoaded = true
+    end
+end
+
 -- Hook into FS25
 Mission00.load = Utils.prependedFunction(Mission00.load, load)
+Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, loadFinished)
 FSBaseMission.update = Utils.appendedFunction(FSBaseMission.update, update)
 FSBaseMission.delete = Utils.appendedFunction(FSBaseMission.delete, delete)
 FSBaseMission.keyEvent = Utils.appendedFunction(FSBaseMission.keyEvent, keyEvent)
