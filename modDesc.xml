@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8" standalone="no" ?>
+<modDesc descVersion="92">
+    <author>TisonK</author>
+    <version>1.0.0.0</version>
+    <modName>FS25_RandomWorldEvents</modName>
+    <title>
+        <en>Random World Events</en>
+        <de>Zufällige Weltereignisse</de>
+        <fr>Événements Aléatoires du Monde</fr>
+        <pl>Losowe Wydarzenia Świata</pl>
+        <es>Eventos Mundiales Aleatorios</es>
+        <it>Eventi Mondiali Casuali</it>
+        <cz>Náhodné Světové Události</cz>
+        <br>Eventos Mundiais Aleatórios</br>
+        <uk>Випадкові світові події</uk>
+        <ru>Случайные мировые события</ru>
+    </title>
+    <description>
+        <en>Adds random events, physics overhaul, and configurable settings.</en>
+        <de>Fügt zufällige Ereignisse, Physik-Überarbeitung und konfigurierbare Einstellungen hinzu.</de>
+        <fr>Ajoute des événements aléatoires, une refonte de la physique et des paramètres configurables.</fr>
+        <pl>Dodaje losowe wydarzenia, przebudowę fizyki i konfigurowalne ustawienia.</pl>
+        <es>Añade eventos aleatorios, revisión de física y configuraciones personalizables.</es>
+        <it>Aggiunge eventi casuali, revisione fisica e impostazioni configurabili.</it>
+        <cz>Přidává náhodné události, přepracování fyziky a konfigurovatelná nastavení.</cz>
+        <br>Adiciona eventos aleatórios, revisão de física e configurações personalizáveis.</br>
+        <uk>Додає випадкові події, переробку фізики та настроювані параметри.</uk>
+        <ru>Добавляет случайные события, переработку физики и настраиваемые параметры.</ru>
+    </description>
+    <iconFilename>icon.dds</iconFilename>
+    
+    <multiplayer supported="true"/>
+    <multiplayer recommended="true"/>
+    
+    <l10n>
+        <text name="rwe_section">
+            <en>Random World Events</en>
+            <de>Zufällige Weltereignisse</de>
+            <fr>Événements Aléatoires du Monde</fr>
+            <pl>Losowe Wydarzenia Świata</pl>
+            <es>Eventos Mundiales Aleatorios</es>
+            <it>Eventi Mondiali Casuali</it>
+            <cz>Náhodné Světové Události</cz>
+            <br>Eventos Mundiais Aleatórios</br>
+            <uk>Випадкові світові події</uk>
+            <ru>Случайные мировые события</ru>
+        </text>
+        
+        <text name="rwe_events_enabled_short">
+            <en>Enable Events</en>
+            <de>Ereignisse aktivieren</de>
+            <fr>Activer les événements</fr>
+            <pl>Włącz wydarzenia</pl>
+            <es>Activar eventos</es>
+            <it>Attiva eventi</it>
+            <cz>Povolit události</cz>
+            <br>Ativar eventos</br>
+            <uk>Увімкнути події</uk>
+            <ru>Включить события</ru>
+        </text>
+        
+        <text name="rwe_events_enabled_long">
+            <en>Enable or disable all random events</en>
+            <de>Alle zufälligen Ereignisse aktivieren oder deaktivieren</de>
+            <fr>Activer ou désactiver tous les événements aléatoires</fr>
+            <pl>Włącz lub wyłącz wszystkie losowe wydarzenia</pl>
+            <es>Activar o desactivar todos los eventos aleatorios</es>
+            <it>Attiva o disattiva tutti gli eventi casuali</it>
+            <cz>Povolit nebo zakázat všechny náhodné události</cz>
+            <br>Ativar ou desativar todos os eventos aleatórios</br>
+            <uk>Увімкнути або вимкнути всі випадкові події</uk>
+            <ru>Включить или выключить все случайные события</ru>
+        </text>
+    </l10n>
+    
+    <extraSourceFiles>
+        <sourceFile filename="RandomWorldEvents.lua"/>
+        <sourceFile filename="gui/RandomWorldEventsScreen.lua"/>
+        <sourceFile filename="gui/RandomWorldEventsFrame.lua"/>
+        <sourceFile filename="gui/RandomWorldDebugFrame.lua"/>
+        <sourceFile filename="utils/economicEvents.lua"/>
+        <sourceFile filename="utils/vehicleEvents.lua"/>
+        <sourceFile filename="utils/fieldEvents.lua"/>
+        <sourceFile filename="utils/animalEvents.lua"/>
+        <sourceFile filename="utils/specialEvents.lua"/>
+        <sourceFile filename="utils/PhysicsUtils.lua"/>
+    </extraSourceFiles>
+    
+    <gui>
+        <filename name="RandomWorldEventsScreen" filename="gui/RandomWorldEventsScreen.xml"/>
+        <filename name="RandomWorldEventsFrame" filename="gui/RandomWorldEventsFrame.xml"/>
+        <filename name="RandomWorldDebugFrame" filename="gui/RandomWorldDebugFrame.xml"/>
+    </gui>
+</modDesc>

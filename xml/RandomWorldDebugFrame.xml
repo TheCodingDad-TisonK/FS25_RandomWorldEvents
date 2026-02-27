@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8" standalone="no"?>
+<GUI name="optionsDebug">
+    <GuiElement type="panel" profile="uiElementContainerFullScreenSpanning" id="root">
+
+        <!-- Page header -->
+        <GuiElement type="empty" profile="ingameMenuFrameHeaderPanel">
+            <GuiElement type="bitmap" profile="ingameMenuGeneralSettingsHeaderIcon" />
+            <GuiElement type="text" profile="ingameMenuFrameHeaderText" text="Physics & Debug Options" />
+        </GuiElement>
+
+        <!-- Layout content -->
+        <GuiElement type="scrollingLayout" profile="ingameMenuSettingsLayout" id="boxLayout">
+
+            <!-- Physics Settings -->
+            <GuiElement type="checkedOption" profile="multiTextOptionSettings" onClick="onCheckClick" id="physicsEnabled">
+                <GuiElement type="button" profile="multiTextOptionSettingsLeft" />
+                <GuiElement type="button" profile="multiTextOptionSettingsRight" />
+                <GuiElement type="text" profile="multiTextOptionSettingsText" />
+                <GuiElement type="text" profile="multiTextOptionSettingsTitle" text="Enable Physics Overhaul" />
+                <GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
+                <GuiElement type="text" profile="multiTextOptionSettingsTooltip" text="Enable advanced physics system" />
+            </GuiElement>
+
+            <!-- Wheel Grip Multiplier -->
+            <GuiElement type="textInput" profile="ingameMenuGameSettingsTextInput" id="wheelGripMultiplier"
+                        onEnterPressed="onEnterPressedTextInput" imeDescription="0.1-5.0" imePlaceholder="Wheel Grip"
+                        imeTitle="Wheel Grip Multiplier" imeKeyboardType="normal" />
+            <GuiElement type="text" profile="multiTextOptionSettingsTitle" text="Wheel Grip Multiplier" />
+            <GuiElement type="text" profile="multiTextOptionSettingsTooltip" text="Adjust wheel grip (0.1=low, 1.0=normal, 5.0=high)" />
+
+            <!-- Articulation Damping -->
+            <GuiElement type="textInput" profile="ingameMenuGameSettingsTextInput" id="articulationDamping"
+                        onEnterPressed="onEnterPressedTextInput" imeDescription="0.1-5.0" imePlaceholder="Damping"
+                        imeTitle="Articulation Damping" imeKeyboardType="normal" />
+            <GuiElement type="text" profile="multiTextOptionSettingsTitle" text="Articulation Damping" />
+            <GuiElement type="text" profile="multiTextOptionSettingsTooltip" text="Damping for articulated vehicles (lower=more movement)" />
+
+            <!-- COM Strength -->
+            <GuiElement type="textInput" profile="ingameMenuGameSettingsTextInput" id="comStrength"
+                        onEnterPressed="onEnterPressedTextInput" imeDescription="0.1-5.0" imePlaceholder="COM Strength"
+                        imeTitle="Center of Mass Strength" imeKeyboardType="normal" />
+            <GuiElement type="text" profile="multiTextOptionSettingsTitle" text="Center of Mass Strength" />
+            <GuiElement type="text" profile="multiTextOptionSettingsTooltip" text="Adjust how load affects vehicle center of mass" />
+
+            <!-- Suspension Stiffness -->
+            <GuiElement type="textInput" profile="ingameMenuGameSettingsTextInput" id="suspensionStiffness"
+                        onEnterPressed="onEnterPressedTextInput" imeDescription="0.1-5.0" imePlaceholder="Stiffness"
+                        imeTitle="Suspension Stiffness" imeKeyboardType="normal" />
+            <GuiElement type="text" profile="multiTextOptionSettingsTitle" text="Suspension Stiffness" />
+            <GuiElement type="text" profile="multiTextOptionSettingsTooltip" text="Adjust suspension stiffness (1.0=normal)" />
+
+            <!-- Show Physics Info -->
+            <GuiElement type="checkedOption" profile="multiTextOptionSettings" onClick="onCheckClick" id="showPhysicsInfo">
+                <GuiElement type="button" profile="multiTextOptionSettingsLeft" />
+                <GuiElement type="button" profile="multiTextOptionSettingsRight" />
+                <GuiElement type="text" profile="multiTextOptionSettingsText" />
+                <GuiElement type="text" profile="multiTextOptionSettingsTitle" text="Show Physics Info" />
+                <GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
+                <GuiElement type="text" profile="multiTextOptionSettingsTooltip" text="Show physics debug information on screen" />
+            </GuiElement>
+
+            <!-- Debug Mode -->
+            <GuiElement type="checkedOption" profile="multiTextOptionSettings" onClick="onCheckClick" id="debugMode">
+                <GuiElement type="button" profile="multiTextOptionSettingsLeft" />
+                <GuiElement type="button" profile="multiTextOptionSettingsRight" />
+                <GuiElement type="text" profile="multiTextOptionSettingsText" />
+                <GuiElement type="text" profile="multiTextOptionSettingsTitle" text="Debug Mode" />
+                <GuiElement type="bitmap" profile="multiTextOptionSettingsBg" />
+                <GuiElement type="text" profile="multiTextOptionSettingsTooltip" text="Enable debug logging for physics system" />
+            </GuiElement>
+
+        </GuiElement>
+    </GuiElement>
+</GUI>
