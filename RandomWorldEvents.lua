@@ -1,5 +1,5 @@
 -- =========================================================
--- Random World Events (version 2.0.0.0) - FS25 Conversion
+-- Random World Events (version 2.0.0.1) - FS25 Conversion
 -- =========================================================
 -- Random events that can occur. Settings can be changed!
 -- =========================================================
