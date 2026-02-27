@@ -331,6 +331,22 @@ vehicleEvents.eventList = {
 }
 
 -- =====================
+-- TICK HANDLER
+-- =====================
+-- Reapplies speed boost each frame so it persists while the event is active.
+-- Registered with the core after events are registered so it runs via
+-- RandomWorldEvents:applyActiveEventEffects() — no :update monkey-patching needed.
+local function vehicleTickHandler(rwe)
+    local eventData = rwe.EVENT_STATE
+    if not eventData.vehicleSpeedBoost then return end
+
+    local vehicle = g_currentMission and g_currentMission.controlledVehicle
+    if vehicle and vehicle == eventData.vehicleSpeedBoost.vehicle then
+        vehicleEvents.applyVehicleSpeedBoost(vehicle, eventData.vehicleSpeedBoost.multiplier)
+    end
+end
+
+-- =====================
 -- REGISTER VEHICLE EVENTS
 -- =====================
 local function registerVehicleEvents()
@@ -338,51 +354,55 @@ local function registerVehicleEvents()
         Logging.warning("[VehicleEvents] g_RandomWorldEvents not available yet")
         return false
     end
-    
+
     for _, e in ipairs(vehicleEvents.eventList) do
         g_RandomWorldEvents:registerEvent({
-            name = e.name,
-            category = "vehicle",
-            weight = 1,
-            duration = {min = 10, max = 30},
+            name         = e.name,
+            category     = "vehicle",
+            weight       = 1,
+            duration     = { min = 10, max = 30 },
             minIntensity = e.minI,
-            canTrigger = function() 
+            canTrigger   = function()
                 return g_currentMission ~= nil
             end,
             onStart = e.func,
             onEnd = function()
                 if g_RandomWorldEvents then
-                    local eventData = g_RandomWorldEvents.EVENT_STATE
-                    
-                    if eventData.vehicleSpeedBoost then
-                        vehicleEvents.resetVehicleSpeed(eventData.vehicleSpeedBoost.vehicle)
-                        eventData.vehicleSpeedBoost = nil
+                    local d = g_RandomWorldEvents.EVENT_STATE
+
+                    if d.vehicleSpeedBoost then
+                        vehicleEvents.resetVehicleSpeed(d.vehicleSpeedBoost.vehicle)
+                        d.vehicleSpeedBoost = nil
                     end
-                    
-                    if eventData.vehicleUpgrade then
-                        local vehicle = eventData.vehicleUpgrade.vehicle
-                        if vehicle and vehicle.originalColor then
-                            local r, g, b = unpack(vehicle.originalColor)
-                            vehicle:setColor(r, g, b)
-                            vehicle.originalColor = nil
+
+                    if d.vehicleUpgrade then
+                        local v = d.vehicleUpgrade.vehicle
+                        if v and v.originalColor then
+                            local r, g, b = unpack(v.originalColor)
+                            v:setColor(r, g, b)
+                            v.originalColor = nil
                         end
-                        eventData.vehicleUpgrade = nil
+                        d.vehicleUpgrade = nil
                     end
-                    
-                    if eventData.engineTrouble then
-                        local motor = eventData.engineTrouble.motor
-                        local originalPower = eventData.engineTrouble.originalPower
-                        if motor and originalPower then
-                            motor.maxPower = originalPower
+
+                    if d.engineTrouble then
+                        local motor = d.engineTrouble.motor
+                        if motor and d.engineTrouble.originalPower then
+                            motor.maxPower = d.engineTrouble.originalPower
                         end
-                        eventData.engineTrouble = nil
+                        d.engineTrouble = nil
                     end
+
+                    d.vehicleAccident = nil
                 end
                 return "Vehicle event ended"
             end
         })
     end
-    
+
+    -- Register the per-tick speed-boost handler with the core.
+    g_RandomWorldEvents:registerTickHandler("vehicleEvents", vehicleTickHandler)
+
     Logging.info("[VehicleEvents] Registered " .. #vehicleEvents.eventList .. " vehicle events")
     return true
 end
@@ -391,46 +411,21 @@ end
 -- DELAYED REGISTRATION
 -- =====================
 if g_RandomWorldEvents and g_RandomWorldEvents.registerEvent then
-    -- Register immediately if available
     registerVehicleEvents()
 else
-    -- Schedule for later registration
     local function delayedRegistration()
         if registerVehicleEvents() then
             Logging.info("[VehicleEvents] Successfully registered via delayed registration")
         end
     end
-    
-    -- Store for later
+
     if not RandomWorldEvents then RandomWorldEvents = {} end
-    if not RandomWorldEvents.pendingRegistrations then 
-        RandomWorldEvents.pendingRegistrations = {} 
+    if not RandomWorldEvents.pendingRegistrations then
+        RandomWorldEvents.pendingRegistrations = {}
     end
     table.insert(RandomWorldEvents.pendingRegistrations, delayedRegistration)
-    
-    Logging.info("[VehicleEvents] Added to pending registrations")
-end
 
--- =====================
--- UPDATE INTEGRATION
--- =====================
-if g_RandomWorldEvents then
-    g_RandomWorldEvents.originalUpdate = g_RandomWorldEvents.originalUpdate or g_RandomWorldEvents.update
-    
-    function g_RandomWorldEvents:update(dt)
-        if self.originalUpdate then
-            self:originalUpdate(dt)
-        end
-        
-        local eventData = self.EVENT_STATE
-        
-        if eventData.vehicleSpeedBoost then
-            local vehicle = g_currentMission and g_currentMission.controlledVehicle
-            if vehicle and vehicle == eventData.vehicleSpeedBoost.vehicle then
-                vehicleEvents.applyVehicleSpeedBoost(vehicle, eventData.vehicleSpeedBoost.multiplier)
-            end
-        end
-    end
+    Logging.info("[VehicleEvents] Added to pending registrations")
 end
 
 Logging.info("[VehicleEvents] Module loaded successfully")

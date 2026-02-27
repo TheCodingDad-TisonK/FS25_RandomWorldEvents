@@ -121,8 +121,10 @@
             </GuiElement>
 
             <!-- Trigger Event Button -->
-            <GuiElement type="button" profile="ingameMenuSettingsPauseButton" text="Trigger Random Event" onClick="onTriggerEventClick" />
-            <GuiElement type="text" profile="multiTextOptionSettingsTooltip" text="Manually trigger a random event (for testing)" />
+            <GuiElement type="button" profile="ingameMenuSettingsPauseButton" id="triggerEventButton"
+                        text="Trigger Random Event" onClick="onTriggerEventClick" />
+            <GuiElement type="text" profile="multiTextOptionSettingsTooltip"
+                        text="Manually trigger a random event (for testing)" />
 
         </GuiElement>
     </GuiElement>

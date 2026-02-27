@@ -96,11 +96,14 @@ local function registerFieldEvents()
             weight = 1,
             duration = {min = 30, max = 120},
             minIntensity = e.minI,
-            canTrigger = function() 
-                return g_currentMission ~= nil and 
-                       g_currentMission.fieldController ~= nil and 
-                       g_currentMission.fieldController.fields and
-                       #g_currentMission.fieldController.fields > 0 
+            canTrigger = function()
+                -- Use g_fieldManager (FS25 API) when available; fall back to
+                -- mission-exists check so field events always have a chance to fire.
+                if g_fieldManager then
+                    local fields = g_fieldManager:getFields()
+                    return fields ~= nil and #fields > 0
+                end
+                return g_currentMission ~= nil
             end,
             onStart = e.func,
             onEnd = function()

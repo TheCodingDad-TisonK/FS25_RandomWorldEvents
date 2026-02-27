@@ -187,64 +187,61 @@ local function registerEconomicEvents()
         })
     end
     
+    -- Register the per-tick logging handler with the core.
+    g_RandomWorldEvents:registerTickHandler("economicEvents", economicTickHandler)
+
     Logging.info("[EconomicEvents] Registered " .. #economicEvents.eventList .. " economic events")
     return true
+end
+
+-- =====================
+-- TICK HANDLER
+-- =====================
+-- Periodically logs active economic modifiers while an event is running.
+-- Registered with the core after events are registered so it runs via
+-- RandomWorldEvents:applyActiveEventEffects() — no :update monkey-patching needed.
+local function economicTickHandler(rwe)
+    local s = rwe.EVENT_STATE
+    if not g_currentMission then return end
+
+    -- Log active modifiers roughly every 30 in-game seconds (30000 ms).
+    local t = g_currentMission.time
+    if t % 30000 < 200 then
+        if s.priceFixing then
+            Logging.info("[EconomicEvent] Price fixing active: +%.0f%% sell prices",
+                s.priceFixing * 100)
+        end
+        if s.exportBonus then
+            Logging.info("[EconomicEvent] Export bonus active: +%.0f%% on exports",
+                s.exportBonus * 100)
+        end
+        if s.economicCrisis then
+            Logging.info("[EconomicEvent] Economic crisis: Market -%.0f%%, Loans +%.0f%%",
+                s.economicCrisis.marketMalus * 100,
+                s.economicCrisis.loanPenalty * 100)
+        end
+    end
 end
 
 -- =====================
 -- DELAYED REGISTRATION
 -- =====================
 if g_RandomWorldEvents and g_RandomWorldEvents.registerEvent then
-    -- Register immediately if available
     registerEconomicEvents()
 else
-    -- Schedule for later registration
     local function delayedRegistration()
         if registerEconomicEvents() then
             Logging.info("[EconomicEvents] Successfully registered via delayed registration")
         end
     end
-    
-    -- Store for later
+
     if not RandomWorldEvents then RandomWorldEvents = {} end
-    if not RandomWorldEvents.pendingRegistrations then 
-        RandomWorldEvents.pendingRegistrations = {} 
+    if not RandomWorldEvents.pendingRegistrations then
+        RandomWorldEvents.pendingRegistrations = {}
     end
     table.insert(RandomWorldEvents.pendingRegistrations, delayedRegistration)
-    
-    Logging.info("[EconomicEvents] Added to pending registrations")
-end
 
--- =====================
--- ECONOMIC UPDATE SYSTEM
--- =====================
-if g_RandomWorldEvents then
-    g_RandomWorldEvents.originalUpdate = g_RandomWorldEvents.originalUpdate or g_RandomWorldEvents.update
-    
-    function g_RandomWorldEvents:updateEconomicEffects(dt)
-        local eventState = self.EVENT_STATE
-        
-        if eventState.priceFixing and g_currentMission and g_currentMission.time % 30000 < 100 then
-            Logging.info("[EconomicEvent] Price fixing active: +%.0f%% sell prices", eventState.priceFixing * 100)
-        end
-        
-        if eventState.exportBonus and g_currentMission and g_currentMission.time % 30000 < 100 then
-            Logging.info("[EconomicEvent] Export bonus active: +%.0f%% on exports", eventState.exportBonus * 100)
-        end
-        
-        if eventState.economicCrisis and g_currentMission and g_currentMission.time % 45000 < 100 then
-            Logging.info("[EconomicEvent] Economic crisis: Market -%.0f%%, Loans +%.0f%%", 
-                eventState.economicCrisis.marketMalus * 100,
-                eventState.economicCrisis.loanPenalty * 100)
-        end
-    end
-    
-    function g_RandomWorldEvents:update(dt)
-        if self.originalUpdate then
-            self:originalUpdate(dt)
-        end
-        self:updateEconomicEffects(dt)
-    end
+    Logging.info("[EconomicEvents] Added to pending registrations")
 end
 
 Logging.info("[EconomicEvents] Module loaded successfully")

@@ -24,7 +24,7 @@ RandomWorldEventsFrame.CONTROLS = {
     'fieldEvents',
     'wildlifeEvents',
     'specialEvents',
-    'triggerEventButtonWrapper',
+    'triggerEventButton',
     'boxLayout'
 }
 

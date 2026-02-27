@@ -55,7 +55,12 @@ RandomWorldEvents = {
     modDirectory = modDirectory,
     isInitialized = false,
     needsSave = false,
-    saveTime = nil
+    saveTime = nil,
+
+    -- Per-tick handler table populated by event modules.
+    -- Each entry: [name] = function(rweInstance) ... end
+    -- Called from applyActiveEventEffects() while an event is active.
+    tickHandlers = {}
 }
 
 RandomWorldEvents.EVENT_STATE = {
@@ -263,6 +268,7 @@ function RandomWorldEvents:registerConsoleCommands()
     addConsoleCommand("rweEnd", "End current event", "consoleCommandEnd", self)
     addConsoleCommand("rweDebug", "Toggle debug mode", "consoleCommandDebug", self)
     addConsoleCommand("rweList", "List available events", "consoleCommandList", self)
+    addConsoleCommand("rweSettings", "Open settings screen", "consoleCommandSettings", self)
     
     Logging.info("[RandomWorldEvents] Console commands registered")
 end
@@ -284,6 +290,14 @@ function RandomWorldEvents:registerEvent(eventData)
     self.EVENTS[eventData.name] = eventData
     Logging.info("[RWE] Registered event: " .. eventData.name)
     return eventData.name
+end
+
+-- Register a per-tick handler called while any event is active.
+-- name   : string key (used for deduplication/replacement)
+-- handler: function(rweInstance) called each frame during an active event
+function RandomWorldEvents:registerTickHandler(name, handler)
+    self.tickHandlers[name] = handler
+    Logging.info("[RWE] Registered tick handler: " .. name)
 end
 
 function RandomWorldEvents:triggerRandomEvent()
@@ -419,8 +433,13 @@ function RandomWorldEvents:update(dt)
     end
 end
 
+-- Called each frame while an event is active. Dispatches to all registered
+-- tick handlers so event modules can apply continuous per-frame effects
+-- (e.g. vehicle speed boost reapplication) without monkey-patching :update.
 function RandomWorldEvents:applyActiveEventEffects()
-    -- Overridden by event modules
+    for _, handler in pairs(self.tickHandlers) do
+        handler(self)
+    end
 end
 
 -- =====================
@@ -429,13 +448,13 @@ end
 
 function RandomWorldEvents:consoleCommandHelp()
     print("=== Random World Events Commands ===")
-    print("rwe - Show this help")
-    print("rweStatus - Show current status")
-    print("rweTest - Trigger random event")
-    print("rweEnd - End current event")
+    print("rwe          - Show this help")
+    print("rweStatus    - Show current status")
+    print("rweTest      - Force-trigger random event")
+    print("rweEnd       - End current event")
+    print("rweSettings  - Open settings screen (also F3)")
     print("rweDebug on|off - Toggle debug mode")
-    print("rweList [category] - List events")
-    print("rweSettings - Open settings menu (F3)")
+    print("rweList [category] - List registered events")
     print("================================")
     return "Random World Events commands listed above"
 end
@@ -517,6 +536,15 @@ function RandomWorldEvents:consoleCommandList(category)
     print(string.format("Total: %d events", total))
     print("========================")
     return string.format("Listed %d events", total)
+end
+
+-- Open the settings screen programmatically.
+function RandomWorldEvents:consoleCommandSettings()
+    if g_gui then
+        g_gui:showGui("RandomWorldEventsScreen")
+        return "Opening settings screen"
+    end
+    return "GUI not available"
 end
 
 -- =====================
@@ -658,18 +686,14 @@ local function delete(mission)
 end
 
 local function keyEvent(unicode, sym, modifier, isDown)
-    if not isDown then return end
-    
-    if rweManager then
-        if sym == 284 then -- F3
-            -- Open settings menu - to be implemented
-            Logging.info("[RWE] F3 pressed - Settings menu")
-        elseif sym == 290 then -- F9
-            -- Trigger random event
-            if rweManager then
-                rweManager:triggerRandomEvent()
-            end
+    if not isDown or not rweManager then return end
+
+    if sym == 284 then -- F3 — open settings screen
+        if g_gui then
+            g_gui:showGui("RandomWorldEventsScreen")
         end
+    elseif sym == 290 then -- F9 — force-trigger a random event
+        rweManager:triggerRandomEvent()
     end
 end
 

@@ -42,11 +42,11 @@ function RandomWorldEventsScreen:setupPages()
     local pages = {
         {
             self.pageOptionsEvents,
-            'settings.dds'
+            'events.dds'    -- Events/settings tab
         },
         {
             self.pageOptionsDebug,
-            'events.dds'
+            'settings.dds'  -- Physics/debug tab
         },
     }
 

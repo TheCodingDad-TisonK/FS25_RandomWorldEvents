@@ -1,129 +1,236 @@
 -- =========================================================
 -- Random World Events (version 2.0.0.0) - FS25
 -- =========================================================
--- Special events for FS25
+-- Wildlife / animal events for FS25
+-- Category: "wildlife"  (matches self.events.wildlifeEvents setting key)
 -- =========================================================
 -- Author: TisonK
 -- =========================================================
 
-local specialEvents = {}
+local animalEvents = {}
 
-specialEvents.eventList = {
-    {name="time_acceleration", minI=1, func=function(intensity) 
-        if not g_RandomWorldEvents then return "Time acceleration!" end
-        
-        if not g_RandomWorldEvents.EVENT_STATE.originalTimeScale then 
-            g_RandomWorldEvents.EVENT_STATE.originalTimeScale = g_currentMission.missionInfo.timeScale 
-        end 
-        g_currentMission.missionInfo.timeScale = g_RandomWorldEvents.EVENT_STATE.originalTimeScale * (5 * intensity) 
-        return "TIME ACCELERATION!" 
-    end},
-    
-    {name="time_slowdown", minI=1, func=function(intensity) 
-        if not g_RandomWorldEvents then return "Time slowdown!" end
-        
-        if not g_RandomWorldEvents.EVENT_STATE.originalTimeScale then 
-            g_RandomWorldEvents.EVENT_STATE.originalTimeScale = g_currentMission.missionInfo.timeScale 
-        end 
-        g_currentMission.missionInfo.timeScale = g_RandomWorldEvents.EVENT_STATE.originalTimeScale / (2 * intensity) 
-        return "TIME SLOWDOWN!" 
-    end},
-    
-    {name="bonus_xp", minI=1, func=function(intensity) 
-        if g_RandomWorldEvents then
-            g_RandomWorldEvents.EVENT_STATE.xpBonus = 0.1 * intensity 
+-- =====================
+-- HELPERS
+-- =====================
+
+animalEvents.getFarmId = function()
+    return g_currentMission and g_currentMission.player and g_currentMission.player.farmId or 0
+end
+
+-- Checks that at least one animal husbandry exists on the map.
+-- Falls back to mission-exists check when g_currentMission.animalSystem is absent.
+animalEvents.hasAnimals = function()
+    if g_currentMission == nil then return false end
+    if g_currentMission.animalSystem then
+        local husbandries = g_currentMission.animalSystem:getHusbandries()
+        return husbandries ~= nil and #husbandries > 0
+    end
+    return true -- allow trigger if we cannot determine animal count
+end
+
+-- =====================
+-- WILDLIFE EVENT LIST
+-- =====================
+animalEvents.eventList = {
+
+    -- 1. Bird flock descends on fields, reducing crop yield --------
+    {
+        name = "wildlife_bird_flock",
+        minI = 1,
+        func = function(intensity)
+            if g_RandomWorldEvents then
+                g_RandomWorldEvents.EVENT_STATE.yieldMalus = 0.05 * intensity
+            end
+            return string.format(
+                "A flock of birds is feeding on your crops! Yield -%.0f%%",
+                intensity * 5
+            )
         end
-        return "XP gain increased!" 
-    end},
-    
-    {name="malus_xp", minI=1, func=function(intensity) 
-        if g_RandomWorldEvents then
-            g_RandomWorldEvents.EVENT_STATE.xpMalus = 0.1 * intensity 
+    },
+
+    -- 2. Beneficial insects arrive, doubling fertilizer effect -----
+    {
+        name = "wildlife_beneficial_insects",
+        minI = 1,
+        func = function()
+            if g_RandomWorldEvents then
+                g_RandomWorldEvents.EVENT_STATE.fertilizerBonus = true
+            end
+            return "Beneficial insects appear! Fertilizer effectiveness doubled!"
         end
-        return "XP gain decreased!" 
-    end},
-    
-    {name="money_bonus", minI=1, func=function(intensity) 
-        if g_RandomWorldEvents then
-            g_RandomWorldEvents.EVENT_STATE.moneyBonus = 0.1 * intensity 
+    },
+
+    -- 3. Wild animal stampede through fields — damage + yield hit --
+    {
+        name = "wildlife_stampede",
+        minI = 2,
+        func = function(intensity)
+            local damage = math.random(300, 700) * intensity
+            if g_currentMission and g_currentMission.addMoney then
+                g_currentMission:addMoney(
+                    -damage,
+                    animalEvents.getFarmId(),
+                    MoneyType.OTHER,
+                    true
+                )
+            end
+            if g_RandomWorldEvents then
+                g_RandomWorldEvents.EVENT_STATE.yieldMalus = 0.03 * intensity
+            end
+            return string.format(
+                "Wild animals stampede through your fields! -€%d damage, yield -%.0f%%",
+                damage, intensity * 3
+            )
         end
-        return "Money gain increased!" 
-    end},
-    
-    {name="money_malus", minI=1, func=function(intensity) 
-        if g_RandomWorldEvents then
-            g_RandomWorldEvents.EVENT_STATE.moneyMalus = 0.1 * intensity 
+    },
+
+    -- 4. Predator spotted — livestock stressed, product penalty ----
+    {
+        name = "wildlife_predator_alert",
+        minI = 2,
+        func = function(intensity)
+            if g_RandomWorldEvents then
+                g_RandomWorldEvents.EVENT_STATE.animalProductMalus = 0.1 * intensity
+            end
+            return string.format(
+                "Predator spotted near the farm! Animals stressed, animal products -%.0f%%",
+                intensity * 10
+            )
         end
-        return "Money gain decreased!" 
-    end},
-    
-    {name="special_event_festival", minI=1, func=function() 
-        return "Festival in town!" 
-    end},
-    
-    {name="equipment_durability_boost", minI=1, func=function() 
-        if g_RandomWorldEvents then
-            g_RandomWorldEvents.EVENT_STATE.durabilityBoost = true 
+    },
+
+    -- 5. Ideal conditions — livestock productivity bonus ----------
+    {
+        name = "wildlife_animal_product_bonus",
+        minI = 1,
+        func = function(intensity)
+            if g_RandomWorldEvents then
+                g_RandomWorldEvents.EVENT_STATE.animalProductBonus = 0.1 * intensity
+            end
+            return string.format(
+                "Ideal conditions for your livestock! Animal products +%.0f%%",
+                intensity * 10
+            )
         end
-        return "Equipment durability increased!" 
-    end},
-    
-    {name="equipment_durability_drop", minI=1, func=function() 
-        if g_RandomWorldEvents then
-            g_RandomWorldEvents.EVENT_STATE.durabilityMalus = true 
+    },
+
+    -- 6. Emergency vet visit — direct cash deduction ---------------
+    {
+        name = "wildlife_veterinary_visit",
+        minI = 1,
+        func = function(intensity)
+            local cost = 500 + (intensity * 400)
+            if g_currentMission and g_currentMission.addMoney then
+                g_currentMission:addMoney(
+                    -cost,
+                    animalEvents.getFarmId(),
+                    MoneyType.OTHER,
+                    true
+                )
+            end
+            return string.format("Emergency veterinary visit! -€%d", cost)
         end
-        return "Equipment durability decreased!" 
-    end},
-    
-    {name="bonus_trade_prices", minI=1, func=function() 
-        if g_RandomWorldEvents then
-            g_RandomWorldEvents.EVENT_STATE.tradeBonus = true 
+    },
+
+    -- 7. Regional disease scare — animal product price penalty -----
+    {
+        name = "wildlife_animal_disease_scare",
+        minI = 2,
+        func = function(intensity)
+            if g_RandomWorldEvents then
+                g_RandomWorldEvents.EVENT_STATE.animalProductMalus = 0.12 * intensity
+            end
+            return string.format(
+                "Disease scare in the region! Animal product prices -%.0f%%",
+                intensity * 12
+            )
         end
-        return "Better trade prices!" 
-    end},
+    },
+
+    -- 8. Rabbit infestation damages crops — harvest penalty --------
+    {
+        name = "wildlife_rabbit_infestation",
+        minI = 1,
+        func = function(intensity)
+            if g_RandomWorldEvents then
+                g_RandomWorldEvents.EVENT_STATE.yieldMalus = 0.04 * intensity
+            end
+            return string.format(
+                "Rabbit infestation in your fields! Harvest -%.0f%%",
+                intensity * 4
+            )
+        end
+    },
+
+    -- 9. Hunting season — local buyers pay more for livestock ------
+    {
+        name = "wildlife_hunting_season",
+        minI = 1,
+        func = function(intensity)
+            if g_RandomWorldEvents then
+                g_RandomWorldEvents.EVENT_STATE.animalProductBonus = 0.08 * intensity
+            end
+            return string.format(
+                "Hunting season brings buyers to the area! Livestock prices +%.0f%%",
+                intensity * 8
+            )
+        end
+    },
+
+    -- 10. Wild bee swarm pollinates fields — crop yield bonus ------
+    {
+        name = "wildlife_bee_swarm",
+        minI = 1,
+        func = function(intensity)
+            if g_RandomWorldEvents then
+                g_RandomWorldEvents.EVENT_STATE.yieldBonus = 0.05 * intensity
+            end
+            return string.format(
+                "Wild bees help pollinate your crops! Yield +%.0f%%",
+                intensity * 5
+            )
+        end
+    },
 }
 
 -- =====================
--- REGISTER SPECIAL EVENTS
+-- REGISTER WILDLIFE EVENTS
 -- =====================
-local function registerSpecialEvents()
+local function registerAnimalEvents()
     if not g_RandomWorldEvents or not g_RandomWorldEvents.registerEvent then
-        Logging.warning("[SpecialEvents] g_RandomWorldEvents not available yet")
+        Logging.warning("[AnimalEvents] g_RandomWorldEvents not available yet")
         return false
     end
-    
-    for _, e in ipairs(specialEvents.eventList) do
+
+    for _, e in ipairs(animalEvents.eventList) do
         g_RandomWorldEvents:registerEvent({
-            name = e.name,
-            category = "special",
-            weight = 1,
-            duration = {min = 10, max = 60},
+            name         = e.name,
+            category     = "wildlife",   -- maps to self.events.wildlifeEvents
+            weight       = 1,
+            duration     = { min = 15, max = 60 },
             minIntensity = e.minI,
-            canTrigger = function() 
-                return g_currentMission ~= nil 
+            canTrigger   = function()
+                -- Require a loaded mission; optionally require animals for animal-
+                -- specific events, but crop events should fire regardless.
+                return g_currentMission ~= nil
             end,
             onStart = e.func,
             onEnd = function()
+                -- Clear all possible EVENT_STATE keys set by any wildlife event.
                 if g_RandomWorldEvents then
-                    if g_RandomWorldEvents.EVENT_STATE.originalTimeScale then
-                        g_currentMission.missionInfo.timeScale = g_RandomWorldEvents.EVENT_STATE.originalTimeScale
-                        g_RandomWorldEvents.EVENT_STATE.originalTimeScale = nil
-                    end
-                    
-                    g_RandomWorldEvents.EVENT_STATE.xpBonus = nil
-                    g_RandomWorldEvents.EVENT_STATE.xpMalus = nil
-                    g_RandomWorldEvents.EVENT_STATE.moneyBonus = nil
-                    g_RandomWorldEvents.EVENT_STATE.moneyMalus = nil
-                    g_RandomWorldEvents.EVENT_STATE.durabilityBoost = nil
-                    g_RandomWorldEvents.EVENT_STATE.durabilityMalus = nil
-                    g_RandomWorldEvents.EVENT_STATE.tradeBonus = nil
+                    local s = g_RandomWorldEvents.EVENT_STATE
+                    s.yieldMalus          = nil
+                    s.yieldBonus          = nil
+                    s.fertilizerBonus     = nil
+                    s.animalProductMalus  = nil
+                    s.animalProductBonus  = nil
                 end
-                return "Special event ended"
+                return "Wildlife event ended"
             end
         })
     end
-    
-    Logging.info("[SpecialEvents] Registered " .. #specialEvents.eventList .. " special events")
+
+    Logging.info("[AnimalEvents] Registered " .. #animalEvents.eventList .. " wildlife events")
     return true
 end
 
@@ -131,24 +238,21 @@ end
 -- DELAYED REGISTRATION
 -- =====================
 if g_RandomWorldEvents and g_RandomWorldEvents.registerEvent then
-    -- Register immediately if available
-    registerSpecialEvents()
+    registerAnimalEvents()
 else
-    -- Schedule for later registration
     local function delayedRegistration()
-        if registerSpecialEvents() then
-            Logging.info("[SpecialEvents] Successfully registered via delayed registration")
+        if registerAnimalEvents() then
+            Logging.info("[AnimalEvents] Successfully registered via delayed registration")
         end
     end
-    
-    -- Store for later
+
     if not RandomWorldEvents then RandomWorldEvents = {} end
-    if not RandomWorldEvents.pendingRegistrations then 
-        RandomWorldEvents.pendingRegistrations = {} 
+    if not RandomWorldEvents.pendingRegistrations then
+        RandomWorldEvents.pendingRegistrations = {}
     end
     table.insert(RandomWorldEvents.pendingRegistrations, delayedRegistration)
-    
-    Logging.info("[SpecialEvents] Added to pending registrations")
+
+    Logging.info("[AnimalEvents] Added to pending registrations")
 end
 
-Logging.info("[SpecialEvents] Module loaded successfully")
+Logging.info("[AnimalEvents] Module loaded successfully")

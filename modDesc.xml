@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="92">
     <author>TisonK</author>
-    <version>1.0.0.0</version>
+    <version>2.0.0.0</version>
     <modName>FS25_RandomWorldEvents</modName>
     <title>
         <en>Random World Events</en>
@@ -28,51 +28,20 @@
         <ru>Добавляет случайные события, переработку физики и настраиваемые параметры.</ru>
     </description>
     <iconFilename>icon.dds</iconFilename>
-    
+
     <multiplayer supported="true"/>
     <multiplayer recommended="true"/>
-    
-    <l10n>
-        <text name="rwe_section">
-            <en>Random World Events</en>
-            <de>Zufällige Weltereignisse</de>
-            <fr>Événements Aléatoires du Monde</fr>
-            <pl>Losowe Wydarzenia Świata</pl>
-            <es>Eventos Mundiales Aleatorios</es>
-            <it>Eventi Mondiali Casuali</it>
-            <cz>Náhodné Světové Události</cz>
-            <br>Eventos Mundiais Aleatórios</br>
-            <uk>Випадкові світові події</uk>
-            <ru>Случайные мировые события</ru>
-        </text>
-        
-        <text name="rwe_events_enabled_short">
-            <en>Enable Events</en>
-            <de>Ereignisse aktivieren</de>
-            <fr>Activer les événements</fr>
-            <pl>Włącz wydarzenia</pl>
-            <es>Activar eventos</es>
-            <it>Attiva eventi</it>
-            <cz>Povolit události</cz>
-            <br>Ativar eventos</br>
-            <uk>Увімкнути події</uk>
-            <ru>Включить события</ru>
-        </text>
-        
-        <text name="rwe_events_enabled_long">
-            <en>Enable or disable all random events</en>
-            <de>Alle zufälligen Ereignisse aktivieren oder deaktivieren</de>
-            <fr>Activer ou désactiver tous les événements aléatoires</fr>
-            <pl>Włącz lub wyłącz wszystkie losowe wydarzenia</pl>
-            <es>Activar o desactivar todos los eventos aleatorios</es>
-            <it>Attiva o disattiva tutti gli eventi casuali</it>
-            <cz>Povolit nebo zakázat všechny náhodné události</cz>
-            <br>Ativar ou desativar todos os eventos aleatórios</br>
-            <uk>Увімкнути або вимкнути всі випадкові події</uk>
-            <ru>Включить или выключить все случайные события</ru>
-        </text>
-    </l10n>
-    
+
+    <!-- Input action for opening the settings screen (F3) -->
+    <actions>
+        <action name="RWE_OPEN_SETTINGS" />
+    </actions>
+    <inputBinding>
+        <actionBinding action="RWE_OPEN_SETTINGS">
+            <binding device="KB_MOUSE_DEFAULT" input="KEY_F3" />
+        </actionBinding>
+    </inputBinding>
+
     <extraSourceFiles>
         <sourceFile filename="RandomWorldEvents.lua"/>
         <sourceFile filename="gui/RandomWorldEventsScreen.lua"/>
@@ -85,10 +54,327 @@
         <sourceFile filename="utils/specialEvents.lua"/>
         <sourceFile filename="utils/PhysicsUtils.lua"/>
     </extraSourceFiles>
-    
-    <gui>
-        <filename name="RandomWorldEventsScreen" filename="gui/RandomWorldEventsScreen.xml"/>
-        <filename name="RandomWorldEventsFrame" filename="gui/RandomWorldEventsFrame.xml"/>
-        <filename name="RandomWorldDebugFrame" filename="gui/RandomWorldDebugFrame.xml"/>
-    </gui>
+
+    <l10n>
+        <!-- ── Core UI strings ──────────────────────────────────── -->
+        <text name="rwe_section">
+            <en>Random World Events</en>
+            <de>Zufällige Weltereignisse</de>
+            <fr>Événements Aléatoires du Monde</fr>
+            <pl>Losowe Wydarzenia Świata</pl>
+            <es>Eventos Mundiales Aleatorios</es>
+            <it>Eventi Mondiali Casuali</it>
+            <cz>Náhodné Světové Události</cz>
+            <br>Eventos Mundiais Aleatórios</br>
+            <uk>Випадкові світові події</uk>
+            <ru>Случайные мировые события</ru>
+        </text>
+
+        <text name="rwe_events_enabled_short">
+            <en>Enable Events</en>
+            <de>Ereignisse aktivieren</de>
+            <fr>Activer les événements</fr>
+            <pl>Włącz wydarzenia</pl>
+            <es>Activar eventos</es>
+            <it>Attiva eventi</it>
+            <cz>Povolit události</cz>
+            <br>Ativar eventos</br>
+            <uk>Увімкнути події</uk>
+            <ru>Включить события</ru>
+        </text>
+
+        <text name="rwe_events_enabled_long">
+            <en>Enable or disable all random events</en>
+            <de>Alle zufälligen Ereignisse aktivieren oder deaktivieren</de>
+            <fr>Activer ou désactiver tous les événements aléatoires</fr>
+            <pl>Włącz lub wyłącz wszystkie losowe wydarzenia</pl>
+            <es>Activar o desactivar todos los eventos aleatorios</es>
+            <it>Attiva o disattiva tutti gli eventi casuali</it>
+            <cz>Povolit nebo zakázat všechny náhodné události</cz>
+            <br>Ativar ou desativar todos os eventos aleatórios</br>
+            <uk>Увімкнути або вимкнути всі випадкові події</uk>
+            <ru>Включить или выключить все случайные события</ru>
+        </text>
+
+        <!-- Input action description (shows in keybinding menu) -->
+        <text name="input_RWE_OPEN_SETTINGS">
+            <en>Open Random World Events Settings</en>
+            <de>Zufällige Weltereignisse Einstellungen öffnen</de>
+            <fr>Ouvrir les paramètres des événements aléatoires</fr>
+            <pl>Otwórz ustawienia losowych wydarzeń</pl>
+            <es>Abrir configuración de eventos aleatorios</es>
+            <it>Apri impostazioni eventi casuali</it>
+            <cz>Otevřít nastavení náhodných událostí</cz>
+            <br>Abrir configurações de eventos aleatórios</br>
+            <uk>Відкрити налаштування випадкових подій</uk>
+            <ru>Открыть настройки случайных событий</ru>
+        </text>
+
+        <!-- ── Help page: category titles ───────────────────────── -->
+        <text name="helpLine_rwe_cat_overview">
+            <en>Overview</en>
+        </text>
+        <text name="helpLine_rwe_cat_categories">
+            <en>Event Categories</en>
+        </text>
+        <text name="helpLine_rwe_cat_settings">
+            <en>Settings</en>
+        </text>
+        <text name="helpLine_rwe_cat_controls">
+            <en>Controls &amp; Commands</en>
+        </text>
+
+        <!-- ── Help page: Overview / page 1 ─────────────────────── -->
+        <text name="helpLine_rwe_ov1_title">
+            <en>What is Random World Events?</en>
+        </text>
+        <text name="helpLine_rwe_ov1_intro_title">
+            <en>Living World</en>
+        </text>
+        <text name="helpLine_rwe_ov1_intro_text">
+            <en>Random World Events brings dynamic, unpredictable events to your farm. Over 43 unique events fire automatically during play, affecting your economy, vehicles, fields, wildlife, and more. No two playthroughs will feel the same.</en>
+        </text>
+        <text name="helpLine_rwe_ov1_expect_title">
+            <en>What to Expect</en>
+        </text>
+        <text name="helpLine_rwe_ov1_expect_text">
+            <en>Events appear as HUD notifications and last for a configurable duration. Some grant bonuses (market booms, fuel refills, crop buffs), while others impose challenges (accidents, price crashes, stampedes). A cooldown timer prevents event spam.</en>
+        </text>
+
+        <!-- ── Help page: Overview / page 2 ─────────────────────── -->
+        <text name="helpLine_rwe_ov2_title">
+            <en>How Events Work</en>
+        </text>
+        <text name="helpLine_rwe_ov2_trigger_title">
+            <en>Trigger System</en>
+        </text>
+        <text name="helpLine_rwe_ov2_trigger_text">
+            <en>Each game tick there is a small probability of an event firing, controlled by the Frequency setting (1-10). When an event triggers, a random eligible event from all enabled categories is selected. Only one event can be active at a time.</en>
+        </text>
+        <text name="helpLine_rwe_ov2_intensity_title">
+            <en>Intensity &amp; Cooldown</en>
+        </text>
+        <text name="helpLine_rwe_ov2_intensity_text">
+            <en>Intensity (1-5) scales the strength of effects — a level 5 market boom gives a bigger bonus than level 1. After each event, a cooldown period (1-240 minutes) must pass before the next event can fire. Both settings are configurable per savegame.</en>
+        </text>
+
+        <!-- ── Help page: Categories / economic ─────────────────── -->
+        <text name="helpLine_rwe_cat1_title">
+            <en>Economic Events</en>
+        </text>
+        <text name="helpLine_rwe_cat1_good_title">
+            <en>Positive Events (8)</en>
+        </text>
+        <text name="helpLine_rwe_cat1_good_text">
+            <en>Government subsidies, market booms, tax refunds, insurance payouts, export opportunities, seed discounts, fertilizer discounts, and equipment discounts. These events grant direct cash or temporary sell-price bonuses.</en>
+        </text>
+        <text name="helpLine_rwe_cat1_bad_title">
+            <en>Negative Events (7)</en>
+        </text>
+        <text name="helpLine_rwe_cat1_bad_text">
+            <en>Market crashes, sudden expenses, loan interest charges, price-fixing scandals, and economic crises. High-intensity crises can combine market penalties with increased loan costs. Toggle the Economic category off to disable all of these.</en>
+        </text>
+
+        <!-- ── Help page: Categories / vehicle + field ───────────── -->
+        <text name="helpLine_rwe_cat2_title">
+            <en>Vehicle &amp; Field Events</en>
+        </text>
+        <text name="helpLine_rwe_cat2_vehicle_title">
+            <en>Vehicle Events (8)</en>
+        </text>
+        <text name="helpLine_rwe_cat2_vehicle_text">
+            <en>Speed boosts, free fuel refills, fuel leaks, minor accidents with repair bills, full fleet cleaning, visual upgrades, engine trouble (reduced power), and emergency repair bills. Most vehicle events target your currently controlled vehicle.</en>
+        </text>
+        <text name="helpLine_rwe_cat2_field_title">
+            <en>Field Events (10)</en>
+        </text>
+        <text name="helpLine_rwe_cat2_field_text">
+            <en>Crop yield bonuses and penalties, doubled or halved fertilizer effectiveness, seed growth speed changes, harvest amount modifiers, and field sale price shifts. Field events require at least one field on the map to be eligible.</en>
+        </text>
+
+        <!-- ── Help page: Categories / special + wildlife ────────── -->
+        <text name="helpLine_rwe_cat3_title">
+            <en>Special &amp; Wildlife Events</en>
+        </text>
+        <text name="helpLine_rwe_cat3_special_title">
+            <en>Special Events (10)</en>
+        </text>
+        <text name="helpLine_rwe_cat3_special_text">
+            <en>Time acceleration and slowdown (affects in-game time scale), XP gain bonuses and penalties, money multipliers, equipment durability changes, better trade prices, and town festivals. Time events restore the original time scale when they end.</en>
+        </text>
+        <text name="helpLine_rwe_cat3_wildlife_title">
+            <en>Wildlife Events (10)</en>
+        </text>
+        <text name="helpLine_rwe_cat3_wildlife_text">
+            <en>Bird flocks, beneficial insects, wild stampedes, predator alerts, rabbit infestations, bee swarms, hunting season bonuses, livestock product bonuses and penalties, veterinary bills, and disease scares. Enable the Wildlife category to experience these.</en>
+        </text>
+
+        <!-- ── Help page: Settings / event settings ──────────────── -->
+        <text name="helpLine_rwe_set1_title">
+            <en>Event Settings</en>
+        </text>
+        <text name="helpLine_rwe_set1_freq_title">
+            <en>Frequency (1-10)</en>
+        </text>
+        <text name="helpLine_rwe_set1_freq_text">
+            <en>Controls how often events fire. Higher values increase the per-tick trigger probability. A frequency of 10 means events fire nearly every cooldown period, while 1 makes them very rare. Default is 5 for a balanced experience.</en>
+        </text>
+        <text name="helpLine_rwe_set1_cool_title">
+            <en>Intensity (1-5) &amp; Cooldown (1-240 min)</en>
+        </text>
+        <text name="helpLine_rwe_set1_cool_text">
+            <en>Intensity scales the magnitude of event effects — use lower values for a gentle experience and higher values for dramatic swings. Cooldown sets the minimum in-game minutes between events. Increase cooldown for a calmer, less frequent experience.</en>
+        </text>
+
+        <!-- ── Help page: Settings / physics settings ────────────── -->
+        <text name="helpLine_rwe_set2_title">
+            <en>Physics Settings</en>
+        </text>
+        <text name="helpLine_rwe_set2_grip_title">
+            <en>Wheel Grip &amp; Suspension</en>
+        </text>
+        <text name="helpLine_rwe_set2_grip_text">
+            <en>The physics system applies terrain-aware wheel friction to your controlled vehicle every frame. Asphalt gives 110% grip, dirt 95%, fields 85%, grass 90%, and snow 70%. The Wheel Grip Multiplier scales all of these values. Suspension Stiffness multiplies spring force.</en>
+        </text>
+        <text name="helpLine_rwe_set2_debug_title">
+            <en>Debug &amp; Physics Info</en>
+        </text>
+        <text name="helpLine_rwe_set2_debug_text">
+            <en>Enable Show Physics Info to log per-vehicle speed and multiplier data each frame. Enable Debug Mode for per-wheel grip values. These are useful for tuning your physics settings but may produce verbose console output during normal play.</en>
+        </text>
+
+        <!-- ── Help page: Controls ───────────────────────────────── -->
+        <text name="helpLine_rwe_ctrl_title">
+            <en>Controls &amp; Console Commands</en>
+        </text>
+        <text name="helpLine_rwe_ctrl_keys_title">
+            <en>Keyboard Shortcuts</en>
+        </text>
+        <text name="helpLine_rwe_ctrl_keys_text">
+            <en>F3: Open the Random World Events settings screen. F9: Immediately force-trigger a random event (useful for testing). These bindings can be changed in the game's keybinding menu under the Random World Events section.</en>
+        </text>
+        <text name="helpLine_rwe_ctrl_console_title">
+            <en>Console Commands</en>
+        </text>
+        <text name="helpLine_rwe_ctrl_console_text">
+            <en>Open the developer console and type: rwe (help), rweStatus (current state), rweTest (force trigger), rweEnd (stop active event), rweSettings (open GUI), rweDebug on|off (toggle verbose logging), rweList [category] (list all events).</en>
+        </text>
+    </l10n>
+
+    <!--
+        In-game help pages accessible from the pause menu → Help.
+        Four categories: Overview, Event Categories, Settings, Controls.
+    -->
+    <helpLines>
+
+        <!-- ── Category 1: Overview ─────────────────────────────── -->
+        <category title="$l10n_helpLine_rwe_cat_overview">
+
+            <page title="$l10n_helpLine_rwe_ov1_title" iconSliceId="icon_info">
+                <paragraph>
+                    <title text="$l10n_helpLine_rwe_ov1_intro_title" />
+                    <text  text="$l10n_helpLine_rwe_ov1_intro_text"  />
+                </paragraph>
+                <paragraph>
+                    <title text="$l10n_helpLine_rwe_ov1_expect_title" />
+                    <text  text="$l10n_helpLine_rwe_ov1_expect_text"  />
+                </paragraph>
+            </page>
+
+            <page title="$l10n_helpLine_rwe_ov2_title" iconSliceId="icon_info">
+                <paragraph>
+                    <title text="$l10n_helpLine_rwe_ov2_trigger_title" />
+                    <text  text="$l10n_helpLine_rwe_ov2_trigger_text"  />
+                </paragraph>
+                <paragraph>
+                    <title text="$l10n_helpLine_rwe_ov2_intensity_title" />
+                    <text  text="$l10n_helpLine_rwe_ov2_intensity_text"  />
+                </paragraph>
+            </page>
+
+        </category>
+
+        <!-- ── Category 2: Event Categories ─────────────────────── -->
+        <category title="$l10n_helpLine_rwe_cat_categories">
+
+            <page title="$l10n_helpLine_rwe_cat1_title" iconSliceId="icon_info">
+                <paragraph>
+                    <title text="$l10n_helpLine_rwe_cat1_good_title" />
+                    <text  text="$l10n_helpLine_rwe_cat1_good_text"  />
+                </paragraph>
+                <paragraph>
+                    <title text="$l10n_helpLine_rwe_cat1_bad_title" />
+                    <text  text="$l10n_helpLine_rwe_cat1_bad_text"  />
+                </paragraph>
+            </page>
+
+            <page title="$l10n_helpLine_rwe_cat2_title" iconSliceId="icon_info">
+                <paragraph>
+                    <title text="$l10n_helpLine_rwe_cat2_vehicle_title" />
+                    <text  text="$l10n_helpLine_rwe_cat2_vehicle_text"  />
+                </paragraph>
+                <paragraph>
+                    <title text="$l10n_helpLine_rwe_cat2_field_title" />
+                    <text  text="$l10n_helpLine_rwe_cat2_field_text"  />
+                </paragraph>
+            </page>
+
+            <page title="$l10n_helpLine_rwe_cat3_title" iconSliceId="icon_info">
+                <paragraph>
+                    <title text="$l10n_helpLine_rwe_cat3_special_title" />
+                    <text  text="$l10n_helpLine_rwe_cat3_special_text"  />
+                </paragraph>
+                <paragraph>
+                    <title text="$l10n_helpLine_rwe_cat3_wildlife_title" />
+                    <text  text="$l10n_helpLine_rwe_cat3_wildlife_text"  />
+                </paragraph>
+            </page>
+
+        </category>
+
+        <!-- ── Category 3: Settings ──────────────────────────────── -->
+        <category title="$l10n_helpLine_rwe_cat_settings">
+
+            <page title="$l10n_helpLine_rwe_set1_title" iconSliceId="icon_info">
+                <paragraph>
+                    <title text="$l10n_helpLine_rwe_set1_freq_title" />
+                    <text  text="$l10n_helpLine_rwe_set1_freq_text"  />
+                </paragraph>
+                <paragraph>
+                    <title text="$l10n_helpLine_rwe_set1_cool_title" />
+                    <text  text="$l10n_helpLine_rwe_set1_cool_text"  />
+                </paragraph>
+            </page>
+
+            <page title="$l10n_helpLine_rwe_set2_title" iconSliceId="icon_info">
+                <paragraph>
+                    <title text="$l10n_helpLine_rwe_set2_grip_title" />
+                    <text  text="$l10n_helpLine_rwe_set2_grip_text"  />
+                </paragraph>
+                <paragraph>
+                    <title text="$l10n_helpLine_rwe_set2_debug_title" />
+                    <text  text="$l10n_helpLine_rwe_set2_debug_text"  />
+                </paragraph>
+            </page>
+
+        </category>
+
+        <!-- ── Category 4: Controls & Commands ───────────────────── -->
+        <category title="$l10n_helpLine_rwe_cat_controls">
+
+            <page title="$l10n_helpLine_rwe_ctrl_title" iconSliceId="icon_info">
+                <paragraph>
+                    <title text="$l10n_helpLine_rwe_ctrl_keys_title" />
+                    <text  text="$l10n_helpLine_rwe_ctrl_keys_text"  />
+                </paragraph>
+                <paragraph>
+                    <title text="$l10n_helpLine_rwe_ctrl_console_title" />
+                    <text  text="$l10n_helpLine_rwe_ctrl_console_text"  />
+                </paragraph>
+            </page>
+
+        </category>
+
+    </helpLines>
+
 </modDesc>
