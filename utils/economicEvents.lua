@@ -151,50 +151,6 @@ economicEvents.eventList = {
 }
 
 -- =====================
--- REGISTER ECONOMIC EVENTS
--- =====================
-local function registerEconomicEvents()
-    if not g_RandomWorldEvents or not g_RandomWorldEvents.registerEvent then
-        Logging.warning("[EconomicEvents] g_RandomWorldEvents not available yet")
-        return false
-    end
-    
-    for _, e in ipairs(economicEvents.eventList) do
-        g_RandomWorldEvents:registerEvent({
-            name = e.name,
-            category = "economic",
-            weight = 1,
-            duration = {min = 15, max = 60},
-            minIntensity = e.minI,
-            canTrigger = function() 
-                return g_currentMission ~= nil 
-            end,
-            onStart = e.func,
-            onEnd = function()
-                if g_RandomWorldEvents then
-                    g_RandomWorldEvents.EVENT_STATE.marketBonus = nil
-                    g_RandomWorldEvents.EVENT_STATE.marketMalus = nil
-                    g_RandomWorldEvents.EVENT_STATE.seedDiscount = nil
-                    g_RandomWorldEvents.EVENT_STATE.fertilizerDiscount = nil
-                    g_RandomWorldEvents.EVENT_STATE.fuelDiscount = nil
-                    g_RandomWorldEvents.EVENT_STATE.equipmentDiscount = nil
-                    g_RandomWorldEvents.EVENT_STATE.priceFixing = nil
-                    g_RandomWorldEvents.EVENT_STATE.exportBonus = nil
-                    g_RandomWorldEvents.EVENT_STATE.economicCrisis = nil
-                end
-                return "Economic event ended"
-            end
-        })
-    end
-    
-    -- Register the per-tick logging handler with the core.
-    g_RandomWorldEvents:registerTickHandler("economicEvents", economicTickHandler)
-
-    Logging.info("[EconomicEvents] Registered " .. #economicEvents.eventList .. " economic events")
-    return true
-end
-
--- =====================
 -- TICK HANDLER
 -- =====================
 -- Periodically logs active economic modifiers while an event is running.
@@ -221,6 +177,50 @@ local function economicTickHandler(rwe)
                 s.economicCrisis.loanPenalty * 100)
         end
     end
+end
+
+-- =====================
+-- REGISTER ECONOMIC EVENTS
+-- =====================
+local function registerEconomicEvents()
+    if not g_RandomWorldEvents or not g_RandomWorldEvents.registerEvent then
+        Logging.warning("[EconomicEvents] g_RandomWorldEvents not available yet")
+        return false
+    end
+
+    for _, e in ipairs(economicEvents.eventList) do
+        g_RandomWorldEvents:registerEvent({
+            name = e.name,
+            category = "economic",
+            weight = 1,
+            duration = {min = 15, max = 60},
+            minIntensity = e.minI,
+            canTrigger = function()
+                return g_currentMission ~= nil
+            end,
+            onStart = e.func,
+            onEnd = function()
+                if g_RandomWorldEvents then
+                    g_RandomWorldEvents.EVENT_STATE.marketBonus = nil
+                    g_RandomWorldEvents.EVENT_STATE.marketMalus = nil
+                    g_RandomWorldEvents.EVENT_STATE.seedDiscount = nil
+                    g_RandomWorldEvents.EVENT_STATE.fertilizerDiscount = nil
+                    g_RandomWorldEvents.EVENT_STATE.fuelDiscount = nil
+                    g_RandomWorldEvents.EVENT_STATE.equipmentDiscount = nil
+                    g_RandomWorldEvents.EVENT_STATE.priceFixing = nil
+                    g_RandomWorldEvents.EVENT_STATE.exportBonus = nil
+                    g_RandomWorldEvents.EVENT_STATE.economicCrisis = nil
+                end
+                return "Economic event ended"
+            end
+        })
+    end
+
+    -- Register the per-tick logging handler with the core.
+    g_RandomWorldEvents:registerTickHandler("economicEvents", economicTickHandler)
+
+    Logging.info("[EconomicEvents] Registered " .. #economicEvents.eventList .. " economic events")
+    return true
 end
 
 -- =====================
