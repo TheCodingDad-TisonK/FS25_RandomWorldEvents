@@ -153,29 +153,71 @@ economicEvents.eventList = {
 -- =====================
 -- TICK HANDLER
 -- =====================
--- Periodically logs active economic modifiers while an event is running.
--- Registered with the core after events are registered so it runs via
--- RandomWorldEvents:applyActiveEventEffects() — no :update monkey-patching needed.
+-- Every 60 in-game seconds: deliver cash savings for active discount
+-- events and loan penalties for economic crises.  Price-hook-managed
+-- flags (marketBonus, priceFixing, exportBonus) are only logged here.
 local function economicTickHandler(rwe)
     local s = rwe.EVENT_STATE
     if not g_currentMission then return end
 
-    -- Log active modifiers roughly every 30 in-game seconds (30000 ms).
     local t = g_currentMission.time
-    if t % 30000 < 200 then
-        if s.priceFixing then
-            Logging.info("[EconomicEvent] Price fixing active: +%.0f%% sell prices",
-                s.priceFixing * 100)
-        end
-        if s.exportBonus then
-            Logging.info("[EconomicEvent] Export bonus active: +%.0f%% on exports",
-                s.exportBonus * 100)
-        end
-        if s.economicCrisis then
-            Logging.info("[EconomicEvent] Economic crisis: Market -%.0f%%, Loans +%.0f%%",
-                s.economicCrisis.marketMalus * 100,
-                s.economicCrisis.loanPenalty * 100)
-        end
+    local lastTick = s.lastEconomicTick or 0
+    if t - lastTick < 60000 then return end
+    s.lastEconomicTick = t
+
+    local farmId = g_currentMission.player and g_currentMission.player.farmId or 0
+    if farmId == 0 then return end
+
+    local amount = 0
+
+    -- Discount events: delivered as per-minute cash savings proxies
+    if s.seedDiscount then
+        local savings = math.floor(500 * s.seedDiscount)
+        amount = amount + savings
+        Logging.info(string.format("[EconomicEvents] Seed discount savings: +€%d", savings))
+    end
+    if s.fertilizerDiscount then
+        local savings = math.floor(400 * s.fertilizerDiscount)
+        amount = amount + savings
+        Logging.info(string.format("[EconomicEvents] Fertilizer discount savings: +€%d", savings))
+    end
+    if s.fuelDiscount then
+        local savings = math.floor(300 * s.fuelDiscount)
+        amount = amount + savings
+        Logging.info(string.format("[EconomicEvents] Fuel discount savings: +€%d", savings))
+    end
+    if s.equipmentDiscount then
+        local savings = math.floor(350 * s.equipmentDiscount)
+        amount = amount + savings
+        Logging.info(string.format("[EconomicEvents] Equipment discount savings: +€%d", savings))
+    end
+
+    -- Economic crisis loan penalty
+    if s.economicCrisis and s.economicCrisis.loanPenalty then
+        local penalty = math.floor(1000 * s.economicCrisis.loanPenalty)
+        amount = amount - penalty
+        Logging.info(string.format("[EconomicEvents] Crisis loan penalty: -€%d", penalty))
+    end
+
+    if amount ~= 0 and g_currentMission.addMoney then
+        g_currentMission:addMoney(amount, farmId, MoneyType.OTHER, false)
+    end
+
+    -- Log price-hook-managed flags (informational only)
+    if s.marketBonus then
+        Logging.info(string.format("[EconomicEvents] Market boom active: +%.0f%% sell prices", s.marketBonus * 100))
+    end
+    if s.marketMalus then
+        Logging.info(string.format("[EconomicEvents] Market crash active: -%.0f%% sell prices", s.marketMalus * 100))
+    end
+    if s.priceFixing then
+        Logging.info(string.format("[EconomicEvents] Price fixing active: +%.0f%% sell prices", s.priceFixing * 100))
+    end
+    if s.exportBonus then
+        Logging.info(string.format("[EconomicEvents] Export bonus active: +%.0f%% on exports", s.exportBonus * 100))
+    end
+    if s.economicCrisis and s.economicCrisis.marketMalus then
+        Logging.info(string.format("[EconomicEvents] Economic crisis: Market -%.0f%%", s.economicCrisis.marketMalus * 100))
     end
 end
 
@@ -201,15 +243,17 @@ local function registerEconomicEvents()
             onStart = e.func,
             onEnd = function()
                 if g_RandomWorldEvents then
-                    g_RandomWorldEvents.EVENT_STATE.marketBonus = nil
-                    g_RandomWorldEvents.EVENT_STATE.marketMalus = nil
-                    g_RandomWorldEvents.EVENT_STATE.seedDiscount = nil
-                    g_RandomWorldEvents.EVENT_STATE.fertilizerDiscount = nil
-                    g_RandomWorldEvents.EVENT_STATE.fuelDiscount = nil
-                    g_RandomWorldEvents.EVENT_STATE.equipmentDiscount = nil
-                    g_RandomWorldEvents.EVENT_STATE.priceFixing = nil
-                    g_RandomWorldEvents.EVENT_STATE.exportBonus = nil
-                    g_RandomWorldEvents.EVENT_STATE.economicCrisis = nil
+                    local s = g_RandomWorldEvents.EVENT_STATE
+                    s.marketBonus        = nil
+                    s.marketMalus        = nil
+                    s.seedDiscount       = nil
+                    s.fertilizerDiscount = nil
+                    s.fuelDiscount       = nil
+                    s.equipmentDiscount  = nil
+                    s.priceFixing        = nil
+                    s.exportBonus        = nil
+                    s.economicCrisis     = nil
+                    s.lastEconomicTick   = nil
                 end
                 return "Economic event ended"
             end

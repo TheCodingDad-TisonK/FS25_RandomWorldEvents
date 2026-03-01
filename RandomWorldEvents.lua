@@ -327,8 +327,22 @@ function RandomWorldEvents:triggerRandomEvent()
         Logging.info("[RWE] No events available to trigger")
         return false
     end
-    
-    local eventId = available[math.random(1, #available)]
+
+    -- Weighted random selection: sum weights, pick by accumulated roll
+    local totalWeight = 0
+    for _, eid in ipairs(available) do
+        totalWeight = totalWeight + (self.EVENTS[eid].weight or 1)
+    end
+    local roll = math.random() * totalWeight
+    local cumulative = 0
+    local eventId = available[#available]  -- fallback to last
+    for _, eid in ipairs(available) do
+        cumulative = cumulative + (self.EVENTS[eid].weight or 1)
+        if roll <= cumulative then
+            eventId = eid
+            break
+        end
+    end
     local event = self.EVENTS[eventId]
     
     self.EVENT_STATE.activeEvent = eventId

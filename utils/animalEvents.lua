@@ -48,15 +48,18 @@ animalEvents.eventList = {
         end
     },
 
-    -- 2. Beneficial insects arrive, doubling fertilizer effect -----
+    -- 2. Beneficial insects arrive, boosting fertilizer effect -----
     {
         name = "wildlife_beneficial_insects",
         minI = 1,
-        func = function()
+        func = function(intensity)
             if g_RandomWorldEvents then
-                g_RandomWorldEvents.EVENT_STATE.fertilizerBonus = true
+                g_RandomWorldEvents.EVENT_STATE.fertilizerBonus = 0.10 + 0.05 * intensity
             end
-            return "Beneficial insects appear! Fertilizer effectiveness doubled!"
+            return string.format(
+                "Beneficial insects appear! Fertilizer effectiveness +%.0f%%!",
+                (0.10 + 0.05 * intensity) * 100
+            )
         end
     },
 
@@ -194,6 +197,48 @@ animalEvents.eventList = {
 }
 
 -- =====================
+-- TICK HANDLER
+-- Delivers periodic cash for animal product bonus/malus flags
+-- every 60 in-game seconds.  numHusbandries scales the amount
+-- so farms with more animals feel a bigger effect.
+-- =====================
+local function wildlifeTickHandler(rwe)
+    if not g_currentMission then return end
+    local s = rwe.EVENT_STATE
+    local t = g_currentMission.time
+    local lastTick = s.lastWildlifeTick or 0
+    if t - lastTick < 60000 then return end
+    s.lastWildlifeTick = t
+
+    local farmId = g_currentMission.player and g_currentMission.player.farmId or 0
+    if farmId == 0 then return end
+
+    local numHusbandries = 1
+    if g_currentMission.animalSystem then
+        local husbandries = g_currentMission.animalSystem:getHusbandries()
+        if husbandries then
+            numHusbandries = math.max(1, #husbandries)
+        end
+    end
+
+    local amount = 0
+    if s.animalProductBonus then
+        local bonus = math.floor(300 * s.animalProductBonus * numHusbandries)
+        amount = amount + bonus
+        Logging.info(string.format("[AnimalEvents] Product bonus: +€%d (%d husbandries)", bonus, numHusbandries))
+    end
+    if s.animalProductMalus then
+        local malus = math.floor(250 * s.animalProductMalus * numHusbandries)
+        amount = amount - malus
+        Logging.info(string.format("[AnimalEvents] Product malus: -€%d (%d husbandries)", malus, numHusbandries))
+    end
+
+    if amount ~= 0 and g_currentMission.addMoney then
+        g_currentMission:addMoney(amount, farmId, MoneyType.OTHER, false)
+    end
+end
+
+-- =====================
 -- REGISTER WILDLIFE EVENTS
 -- =====================
 local function registerAnimalEvents()
@@ -219,16 +264,19 @@ local function registerAnimalEvents()
                 -- Clear all possible EVENT_STATE keys set by any wildlife event.
                 if g_RandomWorldEvents then
                     local s = g_RandomWorldEvents.EVENT_STATE
-                    s.yieldMalus          = nil
-                    s.yieldBonus          = nil
-                    s.fertilizerBonus     = nil
-                    s.animalProductMalus  = nil
-                    s.animalProductBonus  = nil
+                    s.yieldMalus         = nil
+                    s.yieldBonus         = nil
+                    s.fertilizerBonus    = nil
+                    s.animalProductMalus = nil
+                    s.animalProductBonus = nil
+                    s.lastWildlifeTick   = nil
                 end
                 return "Wildlife event ended"
             end
         })
     end
+
+    g_RandomWorldEvents:registerTickHandler("wildlifeEvents", wildlifeTickHandler)
 
     Logging.info("[AnimalEvents] Registered " .. #animalEvents.eventList .. " wildlife events")
     return true
