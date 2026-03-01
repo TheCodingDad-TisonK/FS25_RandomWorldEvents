@@ -1,5 +1,5 @@
 -- =========================================================
--- Random World Events (version 2.0.0.3) - FS25 Conversion
+-- Random World Events (version 2.0.0.5) - FS25 Conversion
 -- =========================================================
 -- Random events that can occur. Settings can be changed!
 -- =========================================================
@@ -674,7 +674,7 @@ FSBaseMission.delete = Utils.appendedFunction(FSBaseMission.delete, delete)
 FSBaseMission.keyEvent = Utils.appendedFunction(FSBaseMission.keyEvent, keyEvent)
 
 Logging.info("========================================")
-Logging.info("   FS25 Random World Events v2.0.0.3   ")
+Logging.info("   FS25 Random World Events v2.0.0.5   ")
 Logging.info("           Successfully Loaded          ")
 Logging.info("     Type 'rwe' in console for help     ")
 Logging.info("========================================")

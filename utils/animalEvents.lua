@@ -1,5 +1,5 @@
 -- =========================================================
--- Random World Events (version 2.0.0.0) - FS25
+-- Random World Events (version 2.0.0.5) - FS25
 -- =========================================================
 -- Wildlife / animal events for FS25
 -- Category: "wildlife"  (matches self.events.wildlifeEvents setting key)

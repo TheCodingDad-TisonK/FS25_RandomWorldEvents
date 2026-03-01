@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="92">
     <author>TisonK</author>
-    <version>2.0.0.4</version>
+    <version>2.0.0.5</version>
     <modName>FS25_RandomWorldEvents</modName>
     <title>
         <en>Random World Events</en>
@@ -131,7 +131,7 @@
             <en>Living World</en>
         </text>
         <text name="helpLine_rwe_ov1_intro_text">
-            <en>Random World Events brings dynamic, unpredictable events to your farm. Over 43 unique events fire automatically during play, affecting your economy, vehicles, fields, wildlife, and more. No two playthroughs will feel the same.</en>
+            <en>Random World Events brings dynamic, unpredictable events to your farm. 53 unique events across five categories fire automatically during play, affecting your economy, vehicles, fields, wildlife, and more. No two playthroughs will feel the same.</en>
         </text>
         <text name="helpLine_rwe_ov1_expect_title">
             <en>What to Expect</en>
@@ -162,16 +162,16 @@
             <en>Economic Events</en>
         </text>
         <text name="helpLine_rwe_cat1_good_title">
-            <en>Positive Events (8)</en>
+            <en>Positive Events (11)</en>
         </text>
         <text name="helpLine_rwe_cat1_good_text">
-            <en>Government subsidies, market booms, tax refunds, insurance payouts, export opportunities, seed discounts, fertilizer discounts, and equipment discounts. These events grant direct cash or temporary sell-price bonuses.</en>
+            <en>Government subsidies, market booms, farmer donations, tax refunds, insurance payouts, export opportunities, seed discounts, fertilizer discounts, fuel discounts, equipment discounts, and price-fixing bonuses (temporary elevated sell prices). These events grant direct cash or temporary price bonuses.</en>
         </text>
         <text name="helpLine_rwe_cat1_bad_title">
-            <en>Negative Events (7)</en>
+            <en>Negative Events (4)</en>
         </text>
         <text name="helpLine_rwe_cat1_bad_text">
-            <en>Market crashes, sudden expenses, loan interest charges, price-fixing scandals, and economic crises. High-intensity crises can combine market penalties with increased loan costs. Toggle the Economic category off to disable all of these.</en>
+            <en>Market crashes (reduced sell prices), sudden expenses (immediate cash loss), loan interest charges (percentage of current money), and economic crises (combined market penalty plus ongoing loan costs). High-intensity crises stack both effects. Toggle the Economic category off to disable all of these.</en>
         </text>
 
         <!-- ── Help page: Categories / vehicle + field ───────────── -->
