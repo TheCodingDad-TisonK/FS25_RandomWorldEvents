@@ -1,5 +1,5 @@
 -- =========================================================
--- Random World Events (version 2.0.0.2) - FS25
+-- Random World Events (version 2.0.0.5) - FS25
 -- Settings integration — hooks into InGameMenuSettingsFrame
 -- Pattern: FS25_NPCFavor NPCSettingsIntegration
 -- Author: TisonK
@@ -26,24 +26,24 @@ RWESettingsIntegration.physicsMultValues  = {0.50,0.75,1.00,1.25,1.50,2.00}
 -- =========================================================
 
 function RWESettingsIntegration:onFrameOpen()
-    -- 'self' is the InGameMenuSettingsFrame instance
-    if self.rwe_initDone then
-        return
+    -- 'self' is the InGameMenuSettingsFrame instance.
+    -- Element creation is one-time; updateSettingsUI runs every open so values
+    -- stay current even after console-command changes while the screen was closed.
+    if not self.rwe_initDone then
+        RWESettingsIntegration:addSettingsElements(self)
+
+        self.gameSettingsLayout:invalidateLayout()
+
+        if self.updateAlternatingElements then
+            self:updateAlternatingElements(self.gameSettingsLayout)
+        end
+        if self.updateGeneralSettings then
+            self:updateGeneralSettings(self.gameSettingsLayout)
+        end
+
+        self.rwe_initDone = true
+        Logging.info("[RWE] Settings controls added to InGameMenuSettingsFrame")
     end
-
-    RWESettingsIntegration:addSettingsElements(self)
-
-    self.gameSettingsLayout:invalidateLayout()
-
-    if self.updateAlternatingElements then
-        self:updateAlternatingElements(self.gameSettingsLayout)
-    end
-    if self.updateGeneralSettings then
-        self:updateGeneralSettings(self.gameSettingsLayout)
-    end
-
-    self.rwe_initDone = true
-    Logging.info("[RWE] Settings controls added to InGameMenuSettingsFrame")
 
     RWESettingsIntegration:updateSettingsUI(self)
 end

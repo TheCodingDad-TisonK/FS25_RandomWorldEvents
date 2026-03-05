@@ -1,5 +1,5 @@
 -- =========================================================
--- Random World Events (version 2.0.0.5) - FS25 Conversion
+-- Random World Events (version 2.0.0.6) - FS25 Conversion
 -- =========================================================
 -- Random events that can occur. Settings can be changed!
 -- =========================================================
@@ -75,6 +75,10 @@ RandomWorldEvents.EVENT_STATE = {
 RandomWorldEvents.EVENTS = {}
 RandomWorldEvents.eventCounter = 0
 
+-- Subsystem API registry — populated by each RWE[Category]API on load.
+-- Access via g_RandomWorldEvents:getSubsystem("economic") etc.
+RandomWorldEvents.subsystems = {}
+
 local RandomWorldEvents_mt = Class(RandomWorldEvents)
 
 -- =====================
@@ -84,15 +88,19 @@ local RandomWorldEvents_mt = Class(RandomWorldEvents)
 function RandomWorldEvents:new(mission)
     local self = setmetatable({}, RandomWorldEvents_mt)
     self.mission = mission
-    
+
+    -- Per-instance subsystem registry (isolates across mission reloads).
+    -- Class-level RandomWorldEvents.subsystems is the default; this shadows it.
+    self.subsystems = {}
+
     self.settingsManager = self:createSettingsManager()
-    
+
     self:loadSettings()
-    
+
     self:registerConsoleCommands()
-    
+
     Logging.info("[RandomWorldEvents] Core initialized successfully")
-    
+
     return self
 end
 
@@ -298,6 +306,23 @@ end
 function RandomWorldEvents:registerTickHandler(name, handler)
     self.tickHandlers[name] = handler
     Logging.info("[RWE] Registered tick handler: " .. name)
+end
+
+-- Register a subsystem API table under a category name.
+-- Called automatically by each api/[Category]API.lua on load.
+-- name     : category string key (e.g. "economic", "field")
+-- apiTable : the RWE[Category]API global table
+function RandomWorldEvents:registerSubsystem(name, apiTable)
+    self.subsystems[name] = apiTable
+    Logging.info("[RWE] Subsystem registered: " .. tostring(name))
+end
+
+-- Return the registered subsystem API for the given category, or nil.
+-- Usage: local econ = g_RandomWorldEvents:getSubsystem("economic")
+---@param name string
+---@return table|nil
+function RandomWorldEvents:getSubsystem(name)
+    return self.subsystems[name]
 end
 
 function RandomWorldEvents:triggerRandomEvent()
@@ -621,7 +646,7 @@ local function load(mission)
         if rweManager.events.enabled and rweManager.events.showNotifications then
             mission:addIngameNotification(
                 FSBaseMission.INGAME_NOTIFICATION_OK,
-                "Random World Events v2.0 loaded"
+                "Random World Events v2.0.0.6 loaded"
             )
         end
         
@@ -674,7 +699,7 @@ FSBaseMission.delete = Utils.appendedFunction(FSBaseMission.delete, delete)
 FSBaseMission.keyEvent = Utils.appendedFunction(FSBaseMission.keyEvent, keyEvent)
 
 Logging.info("========================================")
-Logging.info("   FS25 Random World Events v2.0.0.5   ")
+Logging.info("   FS25 Random World Events v2.0.0.6   ")
 Logging.info("           Successfully Loaded          ")
 Logging.info("     Type 'rwe' in console for help     ")
 Logging.info("========================================")

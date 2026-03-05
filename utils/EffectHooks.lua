@@ -1,5 +1,5 @@
 -- =========================================================
--- Random World Events (version 2.0.0.5) - FS25
+-- Random World Events (version 2.0.0.6) - FS25
 -- =========================================================
 -- EffectHooks — patches FS25 class methods to apply EVENT_STATE
 -- flags as real gameplay modifiers.
@@ -21,12 +21,15 @@ _G.RWE_EffectHooks_installed = true
 -- ECONOMY MANAGER HOOK
 -- Patches EconomyManager.getPricePerLiter to apply EVENT_STATE
 -- price multipliers whenever the player sells goods.
+--
+-- FS25 signature: getPricePerLiter(fillTypeIndex, supplyDemandPressure, ...)
+-- fillTypeIndex is captured so per-crop modifiers from RWEEconomicAPI can be applied.
 -- =====================
 if EconomyManager and EconomyManager.getPricePerLiter then
     local origGetPrice = EconomyManager.getPricePerLiter
 
-    EconomyManager.getPricePerLiter = function(self, ...)
-        local price = origGetPrice(self, ...)
+    EconomyManager.getPricePerLiter = function(self, fillTypeIndex, ...)
+        local price = origGetPrice(self, fillTypeIndex, ...)
         if type(price) ~= "number" or price <= 0 then return price end
         if not g_RandomWorldEvents then return price end
 
@@ -53,10 +56,25 @@ if EconomyManager and EconomyManager.getPricePerLiter then
         -- Special / wildlife
         if s.tradeBonus then mult = mult * (1 + s.tradeBonus) end
 
+        -- Per-crop-type modifiers from RWEEconomicAPI:setPriceModifier().
+        -- Entries are keyed by FillType index or string.  Expired entries are
+        -- lazily pruned here to avoid a separate cleanup pass.
+        if s.customPriceModifiers and fillTypeIndex ~= nil then
+            local entry = s.customPriceModifiers[fillTypeIndex]
+            if entry then
+                if entry.expiresAt and g_currentMission and g_currentMission.time > entry.expiresAt then
+                    -- Expired — prune and skip.
+                    s.customPriceModifiers[fillTypeIndex] = nil
+                else
+                    mult = mult * entry.multiplier
+                end
+            end
+        end
+
         if mult ~= 1.0 and g_RandomWorldEvents.debug and g_RandomWorldEvents.debug.enabled then
             Logging.info(string.format(
-                "[EffectHooks] Price modifier: x%.3f (base €%.2f -> €%.2f)",
-                mult, price, price * mult))
+                "[EffectHooks] Price modifier: x%.3f (fillType=%s base €%.2f -> €%.2f)",
+                mult, tostring(fillTypeIndex), price, price * mult))
         end
 
         return price * mult

@@ -1,5 +1,5 @@
 -- =========================================================
--- Random World Events (version 2.0.0.5) - FS25
+-- Random World Events (version 2.0.0.6) - FS25
 -- =========================================================
 -- Physics utilities for FS25
 -- =========================================================
@@ -109,31 +109,25 @@ end
 
 function PhysicsUtils:showPhysicsInfo(vehicle)
     if not vehicle then return end
-    
+
     local physics = g_RandomWorldEvents and g_RandomWorldEvents.physics
     if not physics then return end
-    
+
     local vehicleName = vehicle.getName and vehicle:getName() or "Vehicle"
     local speed = vehicle.lastSpeedReal or 0
     local speedKmh = speed * 3.6
-    
-    local info = string.format(
-        "Physics Info - %s (%.1f km/h):\n" ..
-        "Grip: %.2f\n" ..
-        "Suspension: %.2f\n" ..
-        "COM Strength: %.2f\n" ..
-        "Damping: %.2f",
+
+    -- This function is only called when physics.showPhysicsInfo is true (see
+    -- applyAdvancedPhysics); no additional debugMode guard needed here.
+    Logging.info(string.format(
+        "[PhysicsUtils] %s (%.1f km/h) — grip: %.2f  suspension: %.2f  COM: %.2f  damping: %.2f",
         vehicleName,
         speedKmh,
         physics.wheelGripMultiplier or 1.0,
         physics.suspensionStiffness or 1.0,
         physics.comStrength or 1.0,
         physics.articulationDamping or 0.5
-    )
-    
-    if physics.debugMode then
-        Logging.info(info)
-    end
+    ))
 end
 
 -- Create instance if g_RandomWorldEvents exists
