@@ -1,0 +1,24 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(gh repo:*)",
+      "Bash(gh api:*)",
+      "Bash(git:*)",
+      "Bash(powershell.exe:*)",
+      "Bash(unzip:*)",
+      "Bash(python3:*)",
+      "Bash(zip:*)",
+      "Bash(py:*)",
+      "Bash(python:*)",
+      "Bash(mv:*)",
+      "Bash(bash:*)",
+      "Bash(ls:*)",
+      "Bash(find:*)",
+      "Bash(gh issue:*)",
+      "Read(//usr/**)",
+      "Read(//mingw64/**)",
+      "Bash(/c/WINDOWS/py:*)",
+      "Bash(sed:*)"
+    ]
+  }
+}
