@@ -3,6 +3,9 @@
 ![Downloads](https://img.shields.io/github/downloads/TheCodingDad-TisonK/FS25_RandomWorldEvents/total?style=for-the-badge)
 ![Release](https://img.shields.io/github/v/release/TheCodingDad-TisonK/FS25_RandomWorldEvents?style=for-the-badge)
 ![License](https://img.shields.io/badge/license-All%20Rights%20Reserved-red?style=for-the-badge)
+<a href="https://paypal.me/TheCodingDad">
+  <img src="https://www.paypalobjects.com/en_US/i/btn/btn_donate_LG.gif" alt="Donate via PayPal" height="50">
+</a>
 
 Adds **43+ dynamic random events**, a physics overhaul, and a full in-game settings screen to **Farming Simulator 25** — making every playthrough feel different.
 
