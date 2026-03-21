@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="no" ?>
 <modDesc descVersion="92">
     <author>TisonK</author>
-    <version>2.0.0.6</version>
+    <version>2.1.0.0</version>
     <modName>FS25_RandomWorldEvents</modName>
     <title>
         <en>Random World Events</en>
@@ -44,6 +44,7 @@
 
     <extraSourceFiles>
         <sourceFile filename="RandomWorldEvents.lua"/>
+        <sourceFile filename="gui/RWEEventHUD.lua"/>
         <sourceFile filename="gui/RWESettingsIntegration.lua"/>
         <sourceFile filename="utils/EffectHooks.lua"/>
         <sourceFile filename="utils/economicEvents.lua"/>
@@ -100,6 +101,57 @@
             <uk>Увімкнути або вимкнути всі випадкові події</uk>
             <ru>Включить или выключить все случайные события</ru>
         </text>
+
+        <!-- ── Subsection headers ────────────────────────────────── -->
+        <text name="rwe_subheader_timing"><en>Event Timing</en></text>
+        <text name="rwe_subheader_hud"><en>Notifications &amp; HUD</en></text>
+        <text name="rwe_subheader_categories"><en>Event Categories</en></text>
+        <text name="rwe_subheader_physics"><en>Physics Override</en></text>
+        <text name="rwe_subheader_debug"><en>Debug</en></text>
+
+        <!-- ── Timing ────────────────────────────────────────────── -->
+        <text name="rwe_frequency_short"><en>Frequency</en></text>
+        <text name="rwe_frequency_long"><en>How often events fire (1 = rare, 10 = frequent)</en></text>
+        <text name="rwe_intensity_short"><en>Intensity</en></text>
+        <text name="rwe_intensity_long"><en>Strength of event effects (1 = mild, 5 = extreme)</en></text>
+        <text name="rwe_cooldown_short"><en>Cooldown</en></text>
+        <text name="rwe_cooldown_long"><en>Minimum in-game time between events</en></text>
+
+        <!-- ── Notifications & HUD ───────────────────────────────── -->
+        <text name="rwe_notifications_short"><en>Show Notifications</en></text>
+        <text name="rwe_notifications_long"><en>Display event notifications on screen</en></text>
+        <text name="rwe_warnings_short"><en>Show Warnings</en></text>
+        <text name="rwe_warnings_long"><en>Show event warning messages</en></text>
+        <text name="rwe_show_hud_short"><en>Show HUD Panel</en></text>
+        <text name="rwe_show_hud_long"><en>Show the World Events HUD overlay (F3 to toggle in-game)</en></text>
+        <text name="rwe_hud_scale_short"><en>HUD Scale</en></text>
+        <text name="rwe_hud_scale_long"><en>Size of the World Events HUD panel</en></text>
+
+        <!-- ── Categories ────────────────────────────────────────── -->
+        <text name="rwe_economic_short"><en>Economic Events</en></text>
+        <text name="rwe_economic_long"><en>Enable market and economic events</en></text>
+        <text name="rwe_vehicle_short"><en>Vehicle Events</en></text>
+        <text name="rwe_vehicle_long"><en>Enable vehicle events (speed, fuel, damage)</en></text>
+        <text name="rwe_field_short"><en>Field Events</en></text>
+        <text name="rwe_field_long"><en>Enable crop and field events</en></text>
+        <text name="rwe_wildlife_short"><en>Wildlife Events</en></text>
+        <text name="rwe_wildlife_long"><en>Enable wildlife and animal events</en></text>
+        <text name="rwe_special_short"><en>Special Events</en></text>
+        <text name="rwe_special_long"><en>Enable time, XP, and special events</en></text>
+
+        <!-- ── Physics ───────────────────────────────────────────── -->
+        <text name="rwe_physics_enabled_short"><en>Enable Physics Override</en></text>
+        <text name="rwe_physics_enabled_long"><en>Apply terrain-aware wheel grip and suspension</en></text>
+        <text name="rwe_wheel_grip_short"><en>Wheel Grip</en></text>
+        <text name="rwe_wheel_grip_long"><en>Scale terrain grip values (1.00 = default)</en></text>
+        <text name="rwe_suspension_short"><en>Suspension Stiffness</en></text>
+        <text name="rwe_suspension_long"><en>Scale suspension spring force (1.00 = default)</en></text>
+
+        <!-- ── Debug ─────────────────────────────────────────────── -->
+        <text name="rwe_physics_info_short"><en>Show Physics Info</en></text>
+        <text name="rwe_physics_info_long"><en>Log per-vehicle speed and grip data each frame</en></text>
+        <text name="rwe_debug_short"><en>Debug Mode</en></text>
+        <text name="rwe_debug_long"><en>Show verbose Random World Events debug output</en></text>
 
         <!-- Input action description (shows in keybinding menu) -->
         <text name="input_RWE_OPEN_SETTINGS">

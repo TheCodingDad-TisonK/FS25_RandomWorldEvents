@@ -1,7 +1,18 @@
 -- =========================================================
--- Random World Events (version 2.0.0.5) - FS25
--- Settings integration — hooks into InGameMenuSettingsFrame
+-- Random World Events - Settings Integration
+-- =========================================================
+-- Adds RWE settings to ESC > Settings > Game Settings page.
 -- Pattern: FS25_NPCFavor NPCSettingsIntegration
+--
+-- Layout (grouped under "Random World Events" header):
+--   Enable Events
+--   — Event Timing —      Frequency, Intensity, Cooldown
+--   — Notifications & HUD — Show Notifications, Show Warnings,
+--                           Show HUD Panel, HUD Scale
+--   — Event Categories — Economic, Vehicle, Field, Wildlife, Special
+--   — Physics Override — Enable Physics, Wheel Grip, Suspension
+--   — Debug —           Show Physics Info, Debug Mode
+-- =========================================================
 -- Author: TisonK
 -- =========================================================
 
@@ -15,10 +26,13 @@ RWESettingsIntegration.frequencyValues  = {1,2,3,4,5,6,7,8,9,10}
 RWESettingsIntegration.intensityOptions = {"1","2","3","4","5"}
 RWESettingsIntegration.intensityValues  = {1,2,3,4,5}
 
-RWESettingsIntegration.cooldownOptions = {"5","10","15","30","60","120","240"}
-RWESettingsIntegration.cooldownValues  = {5,10,15,30,60,120,240}
+RWESettingsIntegration.cooldownOptions  = {"5 min","10 min","15 min","30 min","60 min","120 min","240 min"}
+RWESettingsIntegration.cooldownValues   = {5,10,15,30,60,120,240}
 
-RWESettingsIntegration.physicsMultOptions = {"0.50","0.75","1.00","1.25","1.50","2.00"}
+RWESettingsIntegration.hudScaleOptions  = {"0.6x","0.8x","1.0x","1.2x","1.5x","1.8x"}
+RWESettingsIntegration.hudScaleValues   = {0.6,0.8,1.0,1.2,1.5,1.8}
+
+RWESettingsIntegration.physicsMultOptions = {"0.50x","0.75x","1.00x","1.25x","1.50x","2.00x"}
 RWESettingsIntegration.physicsMultValues  = {0.50,0.75,1.00,1.25,1.50,2.00}
 
 -- =========================================================
@@ -27,8 +41,6 @@ RWESettingsIntegration.physicsMultValues  = {0.50,0.75,1.00,1.25,1.50,2.00}
 
 function RWESettingsIntegration:onFrameOpen()
     -- 'self' is the InGameMenuSettingsFrame instance.
-    -- Element creation is one-time; updateSettingsUI runs every open so values
-    -- stay current even after console-command changes while the screen was closed.
     if not self.rwe_initDone then
         RWESettingsIntegration:addSettingsElements(self)
 
@@ -49,121 +61,152 @@ function RWESettingsIntegration:onFrameOpen()
 end
 
 -- =========================================================
--- Add all settings elements to the game settings layout
+-- Add all settings elements
 -- =========================================================
 
 function RWESettingsIntegration:addSettingsElements(frame)
-    -- Section header
+    -- ── Main header ───────────────────────────────────────
     RWESettingsIntegration:addSectionHeader(frame,
         g_i18n:getText("rwe_section") or "Random World Events"
     )
 
-    -- Enable Events
     frame.rwe_eventsEnabled = RWESettingsIntegration:addBinaryOption(
         frame, "onRWEEventsEnabledChanged",
         g_i18n:getText("rwe_events_enabled_short") or "Enable Events",
-        g_i18n:getText("rwe_events_enabled_long") or "Enable or disable all random events"
+        g_i18n:getText("rwe_events_enabled_long")  or "Enable or disable all random events"
     )
 
-    -- Frequency
+    -- ── Event Timing ──────────────────────────────────────
+    RWESettingsIntegration:addSubHeader(frame,
+        g_i18n:getText("rwe_subheader_timing") or "Event Timing"
+    )
+
     frame.rwe_frequency = RWESettingsIntegration:addMultiTextOption(
         frame, "onRWEFrequencyChanged",
         RWESettingsIntegration.frequencyOptions,
-        "Event Frequency",
-        "How often events fire (1=rare, 10=frequent)"
+        g_i18n:getText("rwe_frequency_short") or "Frequency",
+        g_i18n:getText("rwe_frequency_long")  or "How often events fire (1 = rare, 10 = frequent)"
     )
 
-    -- Intensity
     frame.rwe_intensity = RWESettingsIntegration:addMultiTextOption(
         frame, "onRWEIntensityChanged",
         RWESettingsIntegration.intensityOptions,
-        "Event Intensity",
-        "Strength of event effects (1=mild, 5=extreme)"
+        g_i18n:getText("rwe_intensity_short") or "Intensity",
+        g_i18n:getText("rwe_intensity_long")  or "Strength of event effects (1 = mild, 5 = extreme)"
     )
 
-    -- Cooldown
     frame.rwe_cooldown = RWESettingsIntegration:addMultiTextOption(
         frame, "onRWECooldownChanged",
         RWESettingsIntegration.cooldownOptions,
-        "Cooldown (minutes)",
-        "Minimum in-game minutes between events"
+        g_i18n:getText("rwe_cooldown_short") or "Cooldown",
+        g_i18n:getText("rwe_cooldown_long")  or "Minimum in-game time between events"
     )
 
-    -- Notifications / Warnings
+    -- ── Notifications & HUD ───────────────────────────────
+    RWESettingsIntegration:addSubHeader(frame,
+        g_i18n:getText("rwe_subheader_hud") or "Notifications & HUD"
+    )
+
     frame.rwe_notifications = RWESettingsIntegration:addBinaryOption(
         frame, "onRWENotificationsChanged",
-        "Show Notifications",
-        "Display event notifications on screen"
+        g_i18n:getText("rwe_notifications_short") or "Show Notifications",
+        g_i18n:getText("rwe_notifications_long")  or "Display event notifications on screen"
     )
 
     frame.rwe_warnings = RWESettingsIntegration:addBinaryOption(
         frame, "onRWEWarningsChanged",
-        "Show Warnings",
-        "Show event warning messages"
+        g_i18n:getText("rwe_warnings_short") or "Show Warnings",
+        g_i18n:getText("rwe_warnings_long")  or "Show event warning messages"
     )
 
-    -- Category toggles
+    frame.rwe_showHUD = RWESettingsIntegration:addBinaryOption(
+        frame, "onRWEShowHUDChanged",
+        g_i18n:getText("rwe_show_hud_short") or "Show HUD Panel",
+        g_i18n:getText("rwe_show_hud_long")  or "Show the World Events HUD overlay (F3 to toggle in-game)"
+    )
+
+    frame.rwe_hudScale = RWESettingsIntegration:addMultiTextOption(
+        frame, "onRWEHudScaleChanged",
+        RWESettingsIntegration.hudScaleOptions,
+        g_i18n:getText("rwe_hud_scale_short") or "HUD Scale",
+        g_i18n:getText("rwe_hud_scale_long")  or "Size of the World Events HUD panel"
+    )
+
+    -- ── Event Categories ──────────────────────────────────
+    RWESettingsIntegration:addSubHeader(frame,
+        g_i18n:getText("rwe_subheader_categories") or "Event Categories"
+    )
+
     frame.rwe_economicEvents = RWESettingsIntegration:addBinaryOption(
         frame, "onRWEEconomicChanged",
-        "Economic Events",
-        "Enable market and economic events"
+        g_i18n:getText("rwe_economic_short") or "Economic Events",
+        g_i18n:getText("rwe_economic_long")  or "Enable market and economic events"
     )
 
     frame.rwe_vehicleEvents = RWESettingsIntegration:addBinaryOption(
         frame, "onRWEVehicleChanged",
-        "Vehicle Events",
-        "Enable vehicle events (speed, fuel, damage)"
+        g_i18n:getText("rwe_vehicle_short") or "Vehicle Events",
+        g_i18n:getText("rwe_vehicle_long")  or "Enable vehicle events (speed, fuel, damage)"
     )
 
     frame.rwe_fieldEvents = RWESettingsIntegration:addBinaryOption(
         frame, "onRWEFieldChanged",
-        "Field Events",
-        "Enable crop and field events"
+        g_i18n:getText("rwe_field_short") or "Field Events",
+        g_i18n:getText("rwe_field_long")  or "Enable crop and field events"
     )
 
     frame.rwe_wildlifeEvents = RWESettingsIntegration:addBinaryOption(
         frame, "onRWEWildlifeChanged",
-        "Wildlife Events",
-        "Enable wildlife and animal events"
+        g_i18n:getText("rwe_wildlife_short") or "Wildlife Events",
+        g_i18n:getText("rwe_wildlife_long")  or "Enable wildlife and animal events"
     )
 
     frame.rwe_specialEvents = RWESettingsIntegration:addBinaryOption(
         frame, "onRWESpecialChanged",
-        "Special Events",
-        "Enable time, XP, and special events"
+        g_i18n:getText("rwe_special_short") or "Special Events",
+        g_i18n:getText("rwe_special_long")  or "Enable time, XP, and special events"
     )
 
-    -- Physics section
+    -- ── Physics Override ──────────────────────────────────
+    RWESettingsIntegration:addSubHeader(frame,
+        g_i18n:getText("rwe_subheader_physics") or "Physics Override"
+    )
+
     frame.rwe_physicsEnabled = RWESettingsIntegration:addBinaryOption(
         frame, "onRWEPhysicsEnabledChanged",
-        "Enable Physics Override",
-        "Apply terrain-aware wheel grip and suspension"
+        g_i18n:getText("rwe_physics_enabled_short") or "Enable Physics Override",
+        g_i18n:getText("rwe_physics_enabled_long")  or "Apply terrain-aware wheel grip and suspension"
     )
 
     frame.rwe_wheelGrip = RWESettingsIntegration:addMultiTextOption(
         frame, "onRWEWheelGripChanged",
         RWESettingsIntegration.physicsMultOptions,
-        "Wheel Grip Multiplier",
-        "Scale terrain grip values (1.00 = default)"
+        g_i18n:getText("rwe_wheel_grip_short") or "Wheel Grip",
+        g_i18n:getText("rwe_wheel_grip_long")  or "Scale terrain grip values (1.00 = default)"
     )
 
     frame.rwe_suspensionStiffness = RWESettingsIntegration:addMultiTextOption(
         frame, "onRWESuspensionChanged",
         RWESettingsIntegration.physicsMultOptions,
-        "Suspension Stiffness",
-        "Scale suspension spring force (1.00 = default)"
+        g_i18n:getText("rwe_suspension_short") or "Suspension Stiffness",
+        g_i18n:getText("rwe_suspension_long")  or "Scale suspension spring force (1.00 = default)"
+    )
+
+    -- ── Debug ─────────────────────────────────────────────
+    RWESettingsIntegration:addSubHeader(frame,
+        g_i18n:getText("rwe_subheader_debug") or "Debug"
     )
 
     frame.rwe_showPhysicsInfo = RWESettingsIntegration:addBinaryOption(
         frame, "onRWEShowPhysicsInfoChanged",
-        "Show Physics Info",
-        "Log per-vehicle speed and grip data each frame"
+        g_i18n:getText("rwe_physics_info_short") or "Show Physics Info",
+        g_i18n:getText("rwe_physics_info_long")  or "Log per-vehicle speed and grip data each frame"
     )
 
     frame.rwe_debugMode = RWESettingsIntegration:addBinaryOption(
         frame, "onRWEDebugChanged",
-        "RWE Debug Mode",
-        "Show verbose Random World Events debug output"
+        g_i18n:getText("rwe_debug_short") or "Debug Mode",
+        g_i18n:getText("rwe_debug_long")  or "Show verbose Random World Events debug output"
     )
 end
 
@@ -173,44 +216,55 @@ end
 
 function RWESettingsIntegration:addSectionHeader(frame, text)
     local textElement = TextElement.new()
-    local textElementProfile = g_gui:getProfile("fs25_settingsSectionHeader")
-    textElement.name = "sectionHeader"
-    textElement:loadProfile(textElementProfile, true)
+    textElement.name  = "sectionHeader"
+    textElement:loadProfile(g_gui:getProfile("fs25_settingsSectionHeader"), true)
     textElement:setText(text)
+    -- InGameMenuSettingsFrame hover code calls setImageColor() on all layout
+    -- children; TextElement doesn't have this method, so stub it out.
+    textElement.setImageColor = function() end
+    frame.gameSettingsLayout:addElement(textElement)
+    textElement:onGuiSetupFinished()
+end
+
+--- Sub-header: plain TextElement with setImageColor stubbed to prevent the
+--- InGameMenuSettingsFrame hover crash. No BitmapElement wrapper needed —
+--- the wrapper was causing a gray box artifact and double-height layout overlap.
+function RWESettingsIntegration:addSubHeader(frame, text)
+    local textElement = TextElement.new()
+    textElement.name  = "subHeader"
+    textElement:loadProfile(g_gui:getProfile("fs25_settingsSectionHeader"), true)
+    textElement:setText(text)
+    textElement.setImageColor = function() end
     frame.gameSettingsLayout:addElement(textElement)
     textElement:onGuiSetupFinished()
 end
 
 function RWESettingsIntegration:addBinaryOption(frame, callbackName, title, tooltip)
     local bitMap = BitmapElement.new()
-    local bitMapProfile = g_gui:getProfile("fs25_multiTextOptionContainer")
-    bitMap:loadProfile(bitMapProfile, true)
+    bitMap:loadProfile(g_gui:getProfile("fs25_multiTextOptionContainer"), true)
 
     local binaryOption = BinaryOptionElement.new()
     binaryOption.useYesNoTexts = true
-    local binaryOptionProfile = g_gui:getProfile("fs25_settingsBinaryOption")
-    binaryOption:loadProfile(binaryOptionProfile, true)
+    binaryOption:loadProfile(g_gui:getProfile("fs25_settingsBinaryOption"), true)
     binaryOption.target = RWESettingsIntegration
     binaryOption:setCallback("onClickCallback", callbackName)
 
-    local titleElement = TextElement.new()
-    local titleProfile = g_gui:getProfile("fs25_settingsMultiTextOptionTitle")
-    titleElement:loadProfile(titleProfile, true)
-    titleElement:setText(title)
+    local titleEl = TextElement.new()
+    titleEl:loadProfile(g_gui:getProfile("fs25_settingsMultiTextOptionTitle"), true)
+    titleEl:setText(title)
 
-    local tooltipElement = TextElement.new()
-    local tooltipProfile = g_gui:getProfile("fs25_multiTextOptionTooltip")
-    tooltipElement.name = "ignore"
-    tooltipElement:loadProfile(tooltipProfile, true)
-    tooltipElement:setText(tooltip)
+    local tooltipEl = TextElement.new()
+    tooltipEl.name = "ignore"
+    tooltipEl:loadProfile(g_gui:getProfile("fs25_multiTextOptionTooltip"), true)
+    tooltipEl:setText(tooltip)
 
-    binaryOption:addElement(tooltipElement)
+    binaryOption:addElement(tooltipEl)
     bitMap:addElement(binaryOption)
-    bitMap:addElement(titleElement)
+    bitMap:addElement(titleEl)
 
     binaryOption:onGuiSetupFinished()
-    titleElement:onGuiSetupFinished()
-    tooltipElement:onGuiSetupFinished()
+    titleEl:onGuiSetupFinished()
+    tooltipEl:onGuiSetupFinished()
 
     frame.gameSettingsLayout:addElement(bitMap)
     bitMap:onGuiSetupFinished()
@@ -220,54 +274,49 @@ end
 
 function RWESettingsIntegration:addMultiTextOption(frame, callbackName, texts, title, tooltip)
     local bitMap = BitmapElement.new()
-    local bitMapProfile = g_gui:getProfile("fs25_multiTextOptionContainer")
-    bitMap:loadProfile(bitMapProfile, true)
+    bitMap:loadProfile(g_gui:getProfile("fs25_multiTextOptionContainer"), true)
 
-    local multiTextOption = MultiTextOptionElement.new()
-    local multiTextOptionProfile = g_gui:getProfile("fs25_settingsMultiTextOption")
-    multiTextOption:loadProfile(multiTextOptionProfile, true)
-    multiTextOption.target = RWESettingsIntegration
-    multiTextOption:setCallback("onClickCallback", callbackName)
-    multiTextOption:setTexts(texts)
+    local multiText = MultiTextOptionElement.new()
+    multiText:loadProfile(g_gui:getProfile("fs25_settingsMultiTextOption"), true)
+    multiText.target = RWESettingsIntegration
+    multiText:setCallback("onClickCallback", callbackName)
+    multiText:setTexts(texts)
 
-    local titleElement = TextElement.new()
-    local titleProfile = g_gui:getProfile("fs25_settingsMultiTextOptionTitle")
-    titleElement:loadProfile(titleProfile, true)
-    titleElement:setText(title)
+    local titleEl = TextElement.new()
+    titleEl:loadProfile(g_gui:getProfile("fs25_settingsMultiTextOptionTitle"), true)
+    titleEl:setText(title)
 
-    local tooltipElement = TextElement.new()
-    local tooltipProfile = g_gui:getProfile("fs25_multiTextOptionTooltip")
-    tooltipElement.name = "ignore"
-    tooltipElement:loadProfile(tooltipProfile, true)
-    tooltipElement:setText(tooltip)
+    local tooltipEl = TextElement.new()
+    tooltipEl.name = "ignore"
+    tooltipEl:loadProfile(g_gui:getProfile("fs25_multiTextOptionTooltip"), true)
+    tooltipEl:setText(tooltip)
 
-    multiTextOption:addElement(tooltipElement)
-    bitMap:addElement(multiTextOption)
-    bitMap:addElement(titleElement)
+    multiText:addElement(tooltipEl)
+    bitMap:addElement(multiText)
+    bitMap:addElement(titleEl)
 
-    multiTextOption:onGuiSetupFinished()
-    titleElement:onGuiSetupFinished()
-    tooltipElement:onGuiSetupFinished()
+    multiText:onGuiSetupFinished()
+    titleEl:onGuiSetupFinished()
+    tooltipEl:onGuiSetupFinished()
 
     frame.gameSettingsLayout:addElement(bitMap)
     bitMap:onGuiSetupFinished()
 
-    return multiTextOption
+    return multiText
 end
 
 -- =========================================================
 -- Update UI from current settings
 -- =========================================================
 
--- Returns index of value in table closest to target
 function RWESettingsIntegration:findValueIndex(values, target)
-    local bestIdx = 1
+    local bestIdx  = 1
     local bestDiff = math.huge
     for i, v in ipairs(values) do
         local diff = math.abs(v - target)
         if diff < bestDiff then
             bestDiff = diff
-            bestIdx = i
+            bestIdx  = i
         end
     end
     return bestIdx
@@ -282,31 +331,42 @@ function RWESettingsIntegration:updateSettingsUI(frame)
     local ev = rwe.events
     local ph = rwe.physics
 
-    -- Events section
+    -- Enable
     if frame.rwe_eventsEnabled then
         frame.rwe_eventsEnabled:setIsChecked(ev.enabled == true, false, false)
     end
+
+    -- Timing
     if frame.rwe_frequency then
         frame.rwe_frequency:setState(RWESettingsIntegration:findValueIndex(
-            RWESettingsIntegration.frequencyValues, ev.frequency or 5
-        ))
+            RWESettingsIntegration.frequencyValues, ev.frequency or 5))
     end
     if frame.rwe_intensity then
         frame.rwe_intensity:setState(RWESettingsIntegration:findValueIndex(
-            RWESettingsIntegration.intensityValues, ev.intensity or 3
-        ))
+            RWESettingsIntegration.intensityValues, ev.intensity or 2))
     end
     if frame.rwe_cooldown then
         frame.rwe_cooldown:setState(RWESettingsIntegration:findValueIndex(
-            RWESettingsIntegration.cooldownValues, ev.cooldown or 30
-        ))
+            RWESettingsIntegration.cooldownValues, ev.cooldown or 30))
     end
+
+    -- HUD & Notifications
     if frame.rwe_notifications then
         frame.rwe_notifications:setIsChecked(ev.showNotifications == true, false, false)
     end
     if frame.rwe_warnings then
         frame.rwe_warnings:setIsChecked(ev.showWarnings == true, false, false)
     end
+    if frame.rwe_showHUD then
+        frame.rwe_showHUD:setIsChecked(ev.showHUD ~= false, false, false)
+    end
+    if frame.rwe_hudScale then
+        local scale = rwe.hudScale or 1.0
+        frame.rwe_hudScale:setState(RWESettingsIntegration:findValueIndex(
+            RWESettingsIntegration.hudScaleValues, scale))
+    end
+
+    -- Categories
     if frame.rwe_economicEvents then
         frame.rwe_economicEvents:setIsChecked(ev.economicEvents == true, false, false)
     end
@@ -323,20 +383,20 @@ function RWESettingsIntegration:updateSettingsUI(frame)
         frame.rwe_specialEvents:setIsChecked(ev.specialEvents == true, false, false)
     end
 
-    -- Physics section
+    -- Physics
     if frame.rwe_physicsEnabled then
         frame.rwe_physicsEnabled:setIsChecked(ph.enabled == true, false, false)
     end
     if frame.rwe_wheelGrip then
         frame.rwe_wheelGrip:setState(RWESettingsIntegration:findValueIndex(
-            RWESettingsIntegration.physicsMultValues, ph.wheelGripMultiplier or 1.0
-        ))
+            RWESettingsIntegration.physicsMultValues, ph.wheelGripMultiplier or 1.0))
     end
     if frame.rwe_suspensionStiffness then
         frame.rwe_suspensionStiffness:setState(RWESettingsIntegration:findValueIndex(
-            RWESettingsIntegration.physicsMultValues, ph.suspensionStiffness or 1.0
-        ))
+            RWESettingsIntegration.physicsMultValues, ph.suspensionStiffness or 1.0))
     end
+
+    -- Debug
     if frame.rwe_showPhysicsInfo then
         frame.rwe_showPhysicsInfo:setIsChecked(ph.showPhysicsInfo == true, false, false)
     end
@@ -346,12 +406,11 @@ function RWESettingsIntegration:updateSettingsUI(frame)
 end
 
 function RWESettingsIntegration:updateGameSettings()
-    -- 'self' is InGameMenuSettingsFrame
     RWESettingsIntegration:updateSettingsUI(self)
 end
 
 -- =========================================================
--- Callback Handlers
+-- Callback helpers
 -- =========================================================
 
 local function applyEventSetting(key, value)
@@ -368,6 +427,10 @@ local function applyPhysicsSetting(key, value)
     Logging.info("[RWE] physics." .. key .. " = " .. tostring(value))
 end
 
+-- =========================================================
+-- Callback Handlers
+-- =========================================================
+
 function RWESettingsIntegration:onRWEEventsEnabledChanged(state)
     applyEventSetting("enabled", state == BinaryOptionElement.STATE_RIGHT)
 end
@@ -377,7 +440,7 @@ function RWESettingsIntegration:onRWEFrequencyChanged(state)
 end
 
 function RWESettingsIntegration:onRWEIntensityChanged(state)
-    applyEventSetting("intensity", RWESettingsIntegration.intensityValues[state] or 3)
+    applyEventSetting("intensity", RWESettingsIntegration.intensityValues[state] or 2)
 end
 
 function RWESettingsIntegration:onRWECooldownChanged(state)
@@ -390,6 +453,23 @@ end
 
 function RWESettingsIntegration:onRWEWarningsChanged(state)
     applyEventSetting("showWarnings", state == BinaryOptionElement.STATE_RIGHT)
+end
+
+function RWESettingsIntegration:onRWEShowHUDChanged(state)
+    applyEventSetting("showHUD", state == BinaryOptionElement.STATE_RIGHT)
+end
+
+function RWESettingsIntegration:onRWEHudScaleChanged(state)
+    local scale = RWESettingsIntegration.hudScaleValues[state] or 1.0
+    if g_RandomWorldEvents then
+        g_RandomWorldEvents.hudScale = scale
+        -- Apply to live HUD immediately
+        if g_RandomWorldEvents.eventHUD then
+            g_RandomWorldEvents.eventHUD.scale = scale
+        end
+        g_RandomWorldEvents:saveSettings()
+        Logging.info("[RWE] hudScale = " .. tostring(scale))
+    end
 end
 
 function RWESettingsIntegration:onRWEEconomicChanged(state)
@@ -417,11 +497,13 @@ function RWESettingsIntegration:onRWEPhysicsEnabledChanged(state)
 end
 
 function RWESettingsIntegration:onRWEWheelGripChanged(state)
-    applyPhysicsSetting("wheelGripMultiplier", RWESettingsIntegration.physicsMultValues[state] or 1.0)
+    applyPhysicsSetting("wheelGripMultiplier",
+        RWESettingsIntegration.physicsMultValues[state] or 1.0)
 end
 
 function RWESettingsIntegration:onRWESuspensionChanged(state)
-    applyPhysicsSetting("suspensionStiffness", RWESettingsIntegration.physicsMultValues[state] or 1.0)
+    applyPhysicsSetting("suspensionStiffness",
+        RWESettingsIntegration.physicsMultValues[state] or 1.0)
 end
 
 function RWESettingsIntegration:onRWEShowPhysicsInfoChanged(state)
@@ -437,9 +519,7 @@ end
 -- =========================================================
 
 local function initHooks()
-    if not InGameMenuSettingsFrame then
-        return
-    end
+    if not InGameMenuSettingsFrame then return end
 
     InGameMenuSettingsFrame.onFrameOpen = Utils.appendedFunction(
         InGameMenuSettingsFrame.onFrameOpen,

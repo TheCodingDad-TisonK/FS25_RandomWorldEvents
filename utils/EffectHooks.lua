@@ -115,7 +115,7 @@ if Vehicle and Vehicle.addDamageAmount then
 
     Logging.info("[EffectHooks] Vehicle.addDamageAmount hooked")
 else
-    Logging.warning("[EffectHooks] Vehicle.addDamageAmount not found — damage hooks disabled")
+    Logging.info("[EffectHooks] Vehicle.addDamageAmount not available in this build — durability scaling disabled")
 end
 
 Logging.info("[EffectHooks] Module loaded successfully")
