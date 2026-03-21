@@ -20,21 +20,25 @@ RandomWorldEvents = {
     
     events = {
         enabled = true,
-        frequency = 5, 
-        intensity = 2, 
+        frequency = 5,
+        intensity = 2,
         showNotifications = true,
         showWarnings = true,
-        cooldown = 30, 
-        
+        showHUD = true,
+        cooldown = 30,
+
         weatherEvents = false,
         economicEvents = true,
         vehicleEvents = true,
         fieldEvents = true,
         wildlifeEvents = true,
         specialEvents = true,
-        
+
         debugLevel = 1
     },
+
+    -- HUD scale stored at top-level (not under events/physics) for clarity
+    hudScale = 1.0,
     
     debug = {
         enabled = false,
@@ -56,6 +60,9 @@ RandomWorldEvents = {
     isInitialized = false,
     needsSave = false,
     saveTime = nil,
+
+    -- HUD instance (created in loadGUI)
+    eventHUD = nil,
 
     -- Per-tick handler table populated by event modules.
     -- Each entry: [name] = function(rweInstance) ... end
@@ -116,6 +123,7 @@ function RandomWorldEvents:createSettingsManager()
                 intensity = 2,
                 showNotifications = true,
                 showWarnings = true,
+                showHUD = true,
                 cooldown = 30,
                 weatherEvents = false,
                 economicEvents = true,
@@ -125,6 +133,7 @@ function RandomWorldEvents:createSettingsManager()
                 specialEvents = true,
                 debugLevel = 1
             },
+            hudScale = 1.0,
             debug = {
                 enabled = false,
                 debugLevel = 1,
@@ -160,7 +169,9 @@ function RandomWorldEvents:createSettingsManager()
                 settingsObject.events.intensity = xml:getInt(manager.XMLTAG..".events.intensity", manager.defaultConfig.events.intensity)
                 settingsObject.events.showNotifications = xml:getBool(manager.XMLTAG..".events.showNotifications", manager.defaultConfig.events.showNotifications)
                 settingsObject.events.showWarnings = xml:getBool(manager.XMLTAG..".events.showWarnings", manager.defaultConfig.events.showWarnings)
+                settingsObject.events.showHUD = xml:getBool(manager.XMLTAG..".events.showHUD", manager.defaultConfig.events.showHUD)
                 settingsObject.events.cooldown = xml:getInt(manager.XMLTAG..".events.cooldown", manager.defaultConfig.events.cooldown)
+                settingsObject.hudScale = xml:getFloat(manager.XMLTAG..".hudScale", manager.defaultConfig.hudScale)
                 settingsObject.events.weatherEvents = xml:getBool(manager.XMLTAG..".events.weatherEvents", manager.defaultConfig.events.weatherEvents)
                 settingsObject.events.economicEvents = xml:getBool(manager.XMLTAG..".events.economicEvents", manager.defaultConfig.events.economicEvents)
                 settingsObject.events.vehicleEvents = xml:getBool(manager.XMLTAG..".events.vehicleEvents", manager.defaultConfig.events.vehicleEvents)
@@ -187,10 +198,11 @@ function RandomWorldEvents:createSettingsManager()
         end
         
         -- Use deep copy to avoid reference issues
-        settingsObject.events = {}
-        settingsObject.debug = {}
-        settingsObject.physics = {}
-        
+        settingsObject.events   = {}
+        settingsObject.debug    = {}
+        settingsObject.physics  = {}
+        settingsObject.hudScale = manager.defaultConfig.hudScale
+
         for k, v in pairs(manager.defaultConfig.events) do
             settingsObject.events[k] = v
         end
@@ -217,7 +229,9 @@ function RandomWorldEvents:createSettingsManager()
             xml:setInt(manager.XMLTAG..".events.intensity", settingsObject.events.intensity)
             xml:setBool(manager.XMLTAG..".events.showNotifications", settingsObject.events.showNotifications)
             xml:setBool(manager.XMLTAG..".events.showWarnings", settingsObject.events.showWarnings)
+            xml:setBool(manager.XMLTAG..".events.showHUD", settingsObject.events.showHUD)
             xml:setInt(manager.XMLTAG..".events.cooldown", settingsObject.events.cooldown)
+            xml:setFloat(manager.XMLTAG..".hudScale", settingsObject.hudScale or 1.0)
             xml:setBool(manager.XMLTAG..".events.weatherEvents", settingsObject.events.weatherEvents)
             xml:setBool(manager.XMLTAG..".events.economicEvents", settingsObject.events.economicEvents)
             xml:setBool(manager.XMLTAG..".events.vehicleEvents", settingsObject.events.vehicleEvents)
@@ -382,11 +396,31 @@ function RandomWorldEvents:triggerRandomEvent()
     Logging.info("[RWE] Event triggered: " .. eventId .. " (Duration: " .. (duration / 60000) .. " minutes)")
     
     local message = event.onStart(self.events.intensity)
-    if message and self.events.showNotifications then
-        g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_INFO, message)
-    end
-    
+    self:notifyEvent(message, event.category, true)
+
     return true
+end
+
+--- Show a rich event notification.
+-- Uses HUD flash queue when available; falls back to ingame notification.
+-- @param message     Display text (nil = silent)
+-- @param categoryKey Event category string
+-- @param isPositive  true = good event, false = bad event
+function RandomWorldEvents:notifyEvent(message, categoryKey, isPositive)
+    if not message then return end
+
+    -- Always push to HUD flash queue (even if HUD is hidden — it queues for when shown)
+    if self.eventHUD then
+        self.eventHUD:pushFlash(message, categoryKey, isPositive)
+    end
+
+    -- Also show the standard ingame notification if enabled
+    if self.events.showNotifications and g_currentMission then
+        local notifType = isPositive
+            and FSBaseMission.INGAME_NOTIFICATION_OK
+            or  FSBaseMission.INGAME_NOTIFICATION_CRITICAL
+        g_currentMission:addIngameNotification(notifType, message)
+    end
 end
 
 -- =====================
@@ -427,8 +461,11 @@ end
 -- =====================
 
 function RandomWorldEvents:update(dt)
-    if not self.isInitialized then
-        return
+    if not self.isInitialized then return end
+
+    -- Tick HUD
+    if self.eventHUD then
+        self.eventHUD:update(dt)
     end
     
     -- Event system update
@@ -451,9 +488,7 @@ function RandomWorldEvents:update(dt)
             local event = self.EVENTS[self.EVENT_STATE.activeEvent]
             if event and event.onEnd then
                 local message = event.onEnd()
-                if message and self.events.showNotifications then
-                    g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_INFO, message)
-                end
+                self:notifyEvent(message, event and event.category, nil)
             end
             Logging.info("[RWE] Event ended: " .. tostring(self.EVENT_STATE.activeEvent))
             self.EVENT_STATE.activeEvent = nil
@@ -536,11 +571,7 @@ function RandomWorldEvents:consoleCommandEnd()
     local event = self.EVENTS[self.EVENT_STATE.activeEvent]
     if event and event.onEnd then
         local message = event.onEnd()
-        if message then
-            if self.events.showNotifications then
-                g_currentMission:addIngameNotification(FSBaseMission.INGAME_NOTIFICATION_INFO, message)
-            end
-        end
+        self:notifyEvent(message, event and event.category, nil)
     end
     
     self.EVENT_STATE.activeEvent = nil
@@ -610,9 +641,18 @@ end
 -- =====================
 
 function RandomWorldEvents:loadGUI()
+    -- Create the event HUD overlay
+    self.eventHUD = RWEEventHUD.new(self)
+    if self.eventHUD then
+        self.eventHUD.scale = self.hudScale or 1.0
+        self.eventHUD:loadLayout()
+        Logging.info("[RWE] Event HUD created")
+    else
+        Logging.warning("[RWE] RWEEventHUD not available — HUD disabled")
+    end
+
     -- Settings are injected into ESC > Settings via RWESettingsIntegration (hooks pattern).
-    -- No custom screen registration needed.
-    Logging.info("[RWE] GUI ready (settings via InGameMenuSettingsFrame hook)")
+    Logging.info("[RWE] GUI ready")
 end
 
 -- =====================
@@ -646,7 +686,7 @@ local function load(mission)
         if rweManager.events.enabled and rweManager.events.showNotifications then
             mission:addIngameNotification(
                 FSBaseMission.INGAME_NOTIFICATION_OK,
-                "Random World Events v2.0.0.6 loaded"
+                "Random World Events v2.1.0.0 loaded"
             )
         end
         
@@ -662,6 +702,11 @@ end
 
 local function delete(mission)
     if rweManager then
+        if rweManager.eventHUD then
+            rweManager.eventHUD:saveLayout()
+            rweManager.eventHUD:delete()
+            rweManager.eventHUD = nil
+        end
         rweManager:saveSettings()
         rweManager = nil
         getfenv(0)["g_RandomWorldEvents"] = nil
@@ -669,18 +714,27 @@ local function delete(mission)
     end
 end
 
-local function keyEvent(unicode, sym, modifier, isDown)
+local function keyEvent(mission, unicode, sym, modifier, isDown)
     if not isDown or not rweManager then return end
 
-    if sym == 284 then -- F3 — hint: settings are in ESC > Settings
-        if g_currentMission then
-            g_currentMission:addIngameNotification(
-                FSBaseMission.INGAME_NOTIFICATION_INFO,
-                "RWE: Open ESC > Settings to configure Random World Events"
-            )
+    if sym == 284 then -- F3 — toggle HUD
+        if rweManager.eventHUD then
+            rweManager.eventHUD:toggleVisibility()
         end
     elseif sym == 290 then -- F9 — force-trigger a random event
         rweManager:triggerRandomEvent()
+    end
+end
+
+local function draw(mission)
+    if rweManager and rweManager.eventHUD then
+        rweManager.eventHUD:draw()
+    end
+end
+
+local function mouseEvent(mission, posX, posY, isDown, isUp, button)
+    if rweManager and rweManager.eventHUD then
+        rweManager.eventHUD:onMouseEvent(posX, posY, isDown, isUp, button)
     end
 end
 
@@ -694,12 +748,14 @@ end
 -- Hook into FS25
 Mission00.load = Utils.prependedFunction(Mission00.load, load)
 Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, loadFinished)
-FSBaseMission.update = Utils.appendedFunction(FSBaseMission.update, update)
-FSBaseMission.delete = Utils.appendedFunction(FSBaseMission.delete, delete)
-FSBaseMission.keyEvent = Utils.appendedFunction(FSBaseMission.keyEvent, keyEvent)
+FSBaseMission.update     = Utils.appendedFunction(FSBaseMission.update,     update)
+FSBaseMission.draw       = Utils.appendedFunction(FSBaseMission.draw,       draw)
+FSBaseMission.mouseEvent = Utils.appendedFunction(FSBaseMission.mouseEvent, mouseEvent)
+FSBaseMission.delete     = Utils.appendedFunction(FSBaseMission.delete,     delete)
+FSBaseMission.keyEvent   = Utils.appendedFunction(FSBaseMission.keyEvent,   keyEvent)
 
 Logging.info("========================================")
-Logging.info("   FS25 Random World Events v2.0.0.6   ")
+Logging.info("   FS25 Random World Events v2.1.0.0   ")
 Logging.info("           Successfully Loaded          ")
 Logging.info("     Type 'rwe' in console for help     ")
 Logging.info("========================================")

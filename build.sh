@@ -24,7 +24,7 @@ root_files = [
     'icon.dds',
     'README.md',
 ]
-subdirs = ['icons', 'gui', 'xml', 'utils']
+subdirs = ['icons', 'gui', 'xml', 'utils', 'api']
 
 with zipfile.ZipFile(out_zip, 'w', compression=zipfile.ZIP_DEFLATED) as zf:
     for f in root_files:
