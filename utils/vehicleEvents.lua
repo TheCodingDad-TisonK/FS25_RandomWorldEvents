@@ -121,13 +121,18 @@ end
 -- VEHICLE DAMAGE SYSTEM
 -- =====================
 vehicleEvents.applyVehicleDamage = function(vehicle, damagePercentage)
-    if not vehicle or not vehicle.addDamageAmount then return end
-    
+    if not vehicle then return end
+
     local damageAmount = damagePercentage / 100
-    vehicle:addDamageAmount(damageAmount)
-    
-    if vehicle.getDamageVisualization then
-        vehicle:getDamageVisualization()
+
+    -- FS25: addDamageAmount is on the Wearable specialization, not a base Vehicle method.
+    if vehicle.addDamageAmount then
+        vehicle:addDamageAmount(damageAmount)
+    elseif vehicle.spec_wearable then
+        local spec = vehicle.spec_wearable
+        local newDamage = math.min((spec.damage or 0) + damageAmount, 1)
+        spec.damage = newDamage
+        spec.damageByCurve = math.max(newDamage - 0.3, 0) / 0.7
     end
 end
 
