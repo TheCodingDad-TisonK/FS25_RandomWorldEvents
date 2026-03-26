@@ -748,6 +748,11 @@ end
 -- Hook into FS25
 Mission00.load = Utils.prependedFunction(Mission00.load, load)
 Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, loadFinished)
+Mission00.saveToXMLFile = Utils.appendedFunction(Mission00.saveToXMLFile, function()
+    if rweManager and rweManager.eventHUD then
+        rweManager.eventHUD:saveLayout()
+    end
+end)
 FSBaseMission.update     = Utils.appendedFunction(FSBaseMission.update,     update)
 FSBaseMission.draw       = Utils.appendedFunction(FSBaseMission.draw,       draw)
 FSBaseMission.mouseEvent = Utils.appendedFunction(FSBaseMission.mouseEvent, mouseEvent)
