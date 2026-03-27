@@ -675,6 +675,8 @@ local function load(mission)
         
         -- Store in global namespace BEFORE loading modules
         getfenv(0)["g_RandomWorldEvents"] = rweManager
+        -- Cross-mod bridge: g_currentMission is a shared C++ object visible to all mods.
+        mission.randomWorldEvents = rweManager
         
         -- Now load event modules (they need g_RandomWorldEvents to exist)
         rweManager:loadEventModules()
@@ -710,6 +712,7 @@ local function delete(mission)
         rweManager:saveSettings()
         rweManager = nil
         getfenv(0)["g_RandomWorldEvents"] = nil
+        if g_currentMission then g_currentMission.randomWorldEvents = nil end
         Logging.info("[RandomWorldEvents] Shutting down")
     end
 end
