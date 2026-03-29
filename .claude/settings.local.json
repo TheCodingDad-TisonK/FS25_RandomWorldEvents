@@ -18,7 +18,11 @@
       "Read(//usr/**)",
       "Read(//mingw64/**)",
       "Bash(/c/WINDOWS/py:*)",
-      "Bash(sed:*)"
+      "Bash(sed:*)",
+      "Skill(fs25-deploy)",
+      "Skill(fs25-log)",
+      "Bash(gh pr:*)",
+      "Skill(fs25-changelog)"
     ]
   }
 }
