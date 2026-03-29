@@ -14,7 +14,14 @@ local animalEvents = {}
 -- =====================
 
 animalEvents.getFarmId = function()
-    return g_currentMission and g_currentMission.player and g_currentMission.player.farmId or 0
+    if g_currentMission and g_currentMission.player and g_currentMission.player.farmId then
+        return g_currentMission.player.farmId
+    end
+    -- Fallback to farm 1 (singleplayer/host farm) so addMoney() is never
+    -- called with farmId=0 (the "no farm" spectator ID), which silently
+    -- discards the transaction. Fixes cash deductions on modded maps where
+    -- g_currentMission.player may be nil when the event fires.
+    return 1
 end
 
 -- Checks that at least one animal husbandry exists on the map.

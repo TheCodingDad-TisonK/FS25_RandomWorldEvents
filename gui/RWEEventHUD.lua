@@ -609,7 +609,7 @@ function RWEEventHUD:drawPanel()
     if self.editMode then
         renderText(x + w * 0.5, cy - tsSmall, tsSmall, "Drag: move   Corner: resize   RMB: done")
     else
-        renderText(x + w * 0.5, cy - tsSmall, tsSmall, "[F3]: toggle   RMB: move/resize")
+        renderText(x + w * 0.5, cy - tsSmall, tsSmall, "RMB: move/resize")
     end
 
     -- Reset text state
