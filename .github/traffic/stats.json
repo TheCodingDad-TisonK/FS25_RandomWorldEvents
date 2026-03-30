@@ -175,5 +175,182 @@
     "stars": 5,
     "forks": 0,
     "watchers": 1
+  },
+  {
+    "timestamp": "2026-03-30T18:59:39Z",
+    "date": "2026-03-30",
+    "views": {
+      "count": 218,
+      "uniques": 104
+    },
+    "clones": {
+      "count": 142,
+      "uniques": 76
+    },
+    "referrers": [
+      {
+        "referrer": "github.com",
+        "count": 106,
+        "uniques": 55
+      },
+      {
+        "referrer": "kingmods.net",
+        "count": 47,
+        "uniques": 22
+      },
+      {
+        "referrer": "symbaloo.com",
+        "count": 10,
+        "uniques": 1
+      },
+      {
+        "referrer": "Google",
+        "count": 9,
+        "uniques": 5
+      },
+      {
+        "referrer": "Bing",
+        "count": 1,
+        "uniques": 1
+      }
+    ],
+    "popular_paths": [
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents",
+        "title": "GitHub - TheCodingDad-TisonK/FS25_RandomWorldEvents: 43+ dynamic random event...",
+        "count": 130,
+        "uniques": 88
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases/tag/v2.1.0.0",
+        "title": "Release v2.1.0.0 — Custom HUD & Settings UX · TheCodingDad-TisonK/FS25_Random...",
+        "count": 18,
+        "uniques": 15
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases/tag/v2.1.1.0",
+        "title": "Release v2.1.1.0 — FarmTablet Integration & HUD Persistence Fix · TheCodingDa...",
+        "count": 12,
+        "uniques": 11
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases",
+        "title": "Releases · TheCodingDad-TisonK/FS25_RandomWorldEvents · GitHub",
+        "count": 12,
+        "uniques": 10
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues",
+        "title": "GitHub · Where software is built",
+        "count": 7,
+        "uniques": 6
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases/tag/v2.1.2.0",
+        "title": "Release v2.1.2.0 — Hotfix · TheCodingDad-TisonK/FS25_RandomWorldEvents",
+        "count": 6,
+        "uniques": 5
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/pulls",
+        "title": "Pull requests · TheCodingDad-TisonK/FS25_RandomWorldEvents",
+        "count": 4,
+        "uniques": 2
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/tags",
+        "title": "Tags · TheCodingDad-TisonK/FS25_RandomWorldEvents · GitHub",
+        "count": 4,
+        "uniques": 2
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases/tag/v2.0.0.6",
+        "title": "Release v2.0.0.6 — Subsystem APIs + bug fixes · TheCodingDad-TisonK/FS25_Rand...",
+        "count": 3,
+        "uniques": 3
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/stargazers",
+        "title": "Stargazers · TheCodingDad-TisonK/FS25_RandomWorldEvents · GitHub",
+        "count": 2,
+        "uniques": 2
+      }
+    ],
+    "releases": [
+      {
+        "assets": [
+          {
+            "downloads": 6,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.1.2.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 15,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.1.1.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 5,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.1.0.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 14,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.0.0.6"
+      },
+      {
+        "assets": [],
+        "tag": "v2.0.0.5"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 16,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.0.0.4"
+      },
+      {
+        "assets": [],
+        "tag": "v2.0.0.3"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 6,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.0.0.2"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 2,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.0.0.0"
+      }
+    ],
+    "stars": 5,
+    "forks": 0,
+    "watchers": 1
   }
 ]
