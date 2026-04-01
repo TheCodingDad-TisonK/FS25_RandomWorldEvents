@@ -22,7 +22,9 @@
       "Skill(fs25-deploy)",
       "Skill(fs25-log)",
       "Bash(gh pr:*)",
-      "Skill(fs25-changelog)"
+      "Skill(fs25-changelog)",
+      "Bash(gh secret:*)",
+      "Bash(node:*)"
     ]
   }
 }

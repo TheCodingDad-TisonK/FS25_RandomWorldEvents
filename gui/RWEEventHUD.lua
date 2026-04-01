@@ -131,7 +131,7 @@ end
 
 function RWEEventHUD:toggleVisibility()
     self.visible = not self.visible
-    local msg = self.visible and "RWE HUD shown" or "RWE HUD hidden"
+    local msg = self.visible and g_i18n:getText("rwe_hud_shown") or g_i18n:getText("rwe_hud_hidden")
     if g_currentMission and g_currentMission.hud and g_currentMission.hud.showBlinkingWarning then
         g_currentMission.hud:showBlinkingWarning(msg, 2000)
     end
@@ -164,15 +164,6 @@ function RWEEventHUD:enterEditMode()
     if g_inputBinding and g_inputBinding.setShowMouseCursor then
         g_inputBinding:setShowMouseCursor(true)
     end
-    if getCamera and getRotation then
-        local ok, cam = pcall(getCamera)
-        if ok and cam and cam ~= 0 then
-            local ok2, rx, ry, rz = pcall(getRotation, cam)
-            if ok2 then
-                self.savedCamRotX, self.savedCamRotY, self.savedCamRotZ = rx, ry, rz
-            end
-        end
-    end
 end
 
 function RWEEventHUD:exitEditMode()
@@ -180,7 +171,6 @@ function RWEEventHUD:exitEditMode()
     self.dragging    = false
     self.resizing    = false
     self.hoverCorner = nil
-    self.savedCamRotX, self.savedCamRotY, self.savedCamRotZ = nil, nil, nil
     if g_inputBinding and g_inputBinding.setShowMouseCursor then
         g_inputBinding:setShowMouseCursor(false)
     end
@@ -358,12 +348,6 @@ function RWEEventHUD:update(dt)
         if g_inputBinding and g_inputBinding.setShowMouseCursor then
             g_inputBinding:setShowMouseCursor(true)
         end
-        if self.savedCamRotX ~= nil and getCamera and setRotation then
-            local ok, cam = pcall(getCamera)
-            if ok and cam and cam ~= 0 then
-                pcall(setRotation, cam, self.savedCamRotX, self.savedCamRotY, self.savedCamRotZ)
-            end
-        end
         if g_gui and (g_gui:getIsGuiVisible() or g_gui:getIsDialogVisible()) then
             self:exitEditMode()
         end
@@ -503,13 +487,13 @@ function RWEEventHUD:drawPanel()
     setTextBold(true)
     setTextAlignment(RenderText.ALIGN_LEFT)
     setTextColor(self.COLORS.HEADER[1], self.COLORS.HEADER[2], self.COLORS.HEADER[3], 1)
-    renderText(x, cy - tsTitle, tsTitle, "WORLD EVENTS")
+    renderText(x, cy - tsTitle, tsTitle, g_i18n:getText("rwe_hud_title"))
 
     local evEnabled  = rwe.events.enabled
     local statusColor = evEnabled and self.COLORS.ENABLED or self.COLORS.DISABLED
     setTextAlignment(RenderText.ALIGN_RIGHT)
     setTextColor(statusColor[1], statusColor[2], statusColor[3], 1)
-    renderText(x + w, cy - tsTitle, tsTitle, evEnabled and "[ON]" or "[OFF]")
+    renderText(x + w, cy - tsTitle, tsTitle, evEnabled and g_i18n:getText("rwe_hud_status_on") or g_i18n:getText("rwe_hud_status_off"))
     setTextBold(false)
     cy = cy - lh
 
@@ -547,7 +531,7 @@ function RWEEventHUD:drawPanel()
 
         setTextAlignment(RenderText.ALIGN_LEFT)
         setTextColor(self.COLORS.LABEL[1], self.COLORS.LABEL[2], self.COLORS.LABEL[3], 1)
-        renderText(x, cy - tsSmall, tsSmall, "Ends in")
+        renderText(x, cy - tsSmall, tsSmall, g_i18n:getText("rwe_hud_ends_in"))
         setTextAlignment(RenderText.ALIGN_RIGHT)
         setTextColor(self.COLORS.COOLDOWN[1], self.COLORS.COOLDOWN[2], self.COLORS.COOLDOWN[3], 1)
         renderText(x + w, cy - tsSmall, tsSmall, remMin .. "m")
@@ -573,19 +557,19 @@ function RWEEventHUD:drawPanel()
 
         setTextAlignment(RenderText.ALIGN_LEFT)
         setTextColor(self.COLORS.LABEL[1], self.COLORS.LABEL[2], self.COLORS.LABEL[3], 1)
-        renderText(x, cy - tsNormal, tsNormal, "No active event")
+        renderText(x, cy - tsNormal, tsNormal, g_i18n:getText("rwe_hud_no_active_event"))
         cy = cy - lh
 
         if isReady then
             setTextAlignment(RenderText.ALIGN_LEFT)
             setTextColor(self.COLORS.READY[1], self.COLORS.READY[2], self.COLORS.READY[3], 1)
-            renderText(x, cy - tsSmall, tsSmall, "Ready to trigger")
+            renderText(x, cy - tsSmall, tsSmall, g_i18n:getText("rwe_hud_ready_to_trigger"))
         else
             local waitMs  = math.max(0, coolUntil - now)
             local waitMin = math.ceil(waitMs / 60000)
             setTextAlignment(RenderText.ALIGN_LEFT)
             setTextColor(self.COLORS.COOLDOWN[1], self.COLORS.COOLDOWN[2], self.COLORS.COOLDOWN[3], 1)
-            renderText(x, cy - tsSmall, tsSmall, "Next in " .. waitMin .. "m")
+            renderText(x, cy - tsSmall, tsSmall, string.format(g_i18n:getText("rwe_hud_next_in"), waitMin))
         end
         cy = cy - lh
     end
@@ -596,7 +580,7 @@ function RWEEventHUD:drawPanel()
     setTextAlignment(RenderText.ALIGN_LEFT)
     setTextColor(self.COLORS.DIM[1], self.COLORS.DIM[2], self.COLORS.DIM[3], 1)
     renderText(x, cy - tsSmall, tsSmall,
-        string.format("Freq %d/10  |  Intensity %d/5", freq, inten))
+        string.format(g_i18n:getText("rwe_hud_freq_intensity"), freq, inten))
     cy = cy - lh
 
     -- Divider
@@ -607,9 +591,9 @@ function RWEEventHUD:drawPanel()
     setTextAlignment(RenderText.ALIGN_CENTER)
     setTextColor(self.COLORS.HINT[1], self.COLORS.HINT[2], self.COLORS.HINT[3], 1)
     if self.editMode then
-        renderText(x + w * 0.5, cy - tsSmall, tsSmall, "Drag: move   Corner: resize   RMB: done")
+        renderText(x + w * 0.5, cy - tsSmall, tsSmall, g_i18n:getText("rwe_hud_hint_edit"))
     else
-        renderText(x + w * 0.5, cy - tsSmall, tsSmall, "RMB: move/resize")
+        renderText(x + w * 0.5, cy - tsSmall, tsSmall, g_i18n:getText("rwe_hud_hint_normal"))
     end
 
     -- Reset text state
