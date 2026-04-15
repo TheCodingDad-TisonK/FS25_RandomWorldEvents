@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-04-13T18:00:35Z
-**Days tracked:** 12 | **Download snapshots:** 51 (hourly)
+**Last updated:** 2026-04-15T12:02:02Z
+**Days tracked:** 13 | **Download snapshots:** 53 (hourly)
 
 ---
 
@@ -11,10 +11,10 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 433 | 93 |
-| Git Clones | 521 | 168 |
+| Page Views | 454 | 96 |
+| Git Clones | 519 | 164 |
 
-> **Engagement:** 4.6 pages per visitor (14-day avg)
+> **Engagement:** 4.7 pages per visitor (14-day avg)
 
 ---
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 267 of 93 visitors cloned or downloaded (**287.0%**)
+> **14-day conversion:** 265 of 96 visitors cloned or downloaded (**276.0%**)
 >
-> Unique cloners: 168 | Release downloads: 99
+> Unique cloners: 164 | Release downloads: 101
 
 ---
 
@@ -42,8 +42,8 @@
 
 | Channel | Count |
 |---------|-------|
-| Zip Downloads | 99 |
-| Git Clones (14-day) | 521 |
+| Zip Downloads | 101 |
+| Git Clones (14-day) | 519 |
 | **Total Acquisitions** | **620** |
 
 ---
@@ -54,10 +54,10 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 217 | 45 |
-| kingmods.net | 60 | 25 |
-| Google | 9 | 7 |
-| symbaloo.com | 6 | 1 |
+| github.com | 226 | 48 |
+| kingmods.net | 53 | 24 |
+| Google | 14 | 9 |
+| symbaloo.com | 7 | 1 |
 | Bing | 1 | 1 |
 | claude.ai | 1 | 1 |
 
@@ -79,16 +79,16 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/TheCodingDad-TisonK/FS25_RandomWorldEvents` | 200 | 84 |
-| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues` | 57 | 6 |
-| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues/8` | 53 | 5 |
-| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases/tag/v2.1.3.0` | 48 | 23 |
+| `/TheCodingDad-TisonK/FS25_RandomWorldEvents` | 212 | 89 |
+| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues` | 59 | 6 |
+| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases/tag/v2.1.3.0` | 54 | 26 |
+| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues/8` | 54 | 6 |
 | `/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases` | 16 | 10 |
-| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases/tag/v2.1.2.0` | 8 | 5 |
-| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues/11` | 7 | 2 |
+| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues/11` | 8 | 3 |
 | `/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases/edit/v2.1.3.0` | 7 | 1 |
+| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/tags` | 5 | 1 |
 | `/TheCodingDad-TisonK/FS25_RandomWorldEvents/commits` | 4 | 1 |
-| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/blob/master/modDesc.xml` | 3 | 1 |
+| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases/tag/v2.1.2.0` | 4 | 1 |
 
 ---
 
