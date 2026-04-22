@@ -3192,5 +3192,186 @@
     "stars": 4,
     "forks": 1,
     "watchers": 2
+  },
+  {
+    "timestamp": "2026-04-22T18:08:21Z",
+    "date": "2026-04-22",
+    "views": {
+      "count": 246,
+      "uniques": 63
+    },
+    "clones": {
+      "count": 482,
+      "uniques": 133
+    },
+    "referrers": [
+      {
+        "referrer": "github.com",
+        "count": 156,
+        "uniques": 42
+      },
+      {
+        "referrer": "Google",
+        "count": 22,
+        "uniques": 7
+      },
+      {
+        "referrer": "kingmods.net",
+        "count": 8,
+        "uniques": 3
+      },
+      {
+        "referrer": "symbaloo.com",
+        "count": 5,
+        "uniques": 1
+      }
+    ],
+    "popular_paths": [
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents",
+        "title": "Overview",
+        "count": 147,
+        "uniques": 61
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases/tag/v2.1.3.0",
+        "title": "/releases/tag/v2.1.3.0",
+        "count": 32,
+        "uniques": 19
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues",
+        "title": "/issues",
+        "count": 29,
+        "uniques": 5
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues/11",
+        "title": "/issues/11",
+        "count": 9,
+        "uniques": 4
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases",
+        "title": "/releases",
+        "count": 8,
+        "uniques": 6
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/tags",
+        "title": "/tags",
+        "count": 6,
+        "uniques": 2
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/edit/master/modDesc.xml",
+        "title": "/edit/master/modDesc.xml",
+        "count": 3,
+        "uniques": 1
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues/8",
+        "title": "/issues/8",
+        "count": 2,
+        "uniques": 2
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/blob/master/modDesc.xml",
+        "title": "/blob/master/modDesc.xml",
+        "count": 2,
+        "uniques": 1
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/commits",
+        "title": "/commits",
+        "count": 2,
+        "uniques": 1
+      }
+    ],
+    "releases": [
+      {
+        "assets": [
+          {
+            "downloads": 34,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.1.3.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 13,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.1.2.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 15,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.1.1.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 6,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.1.0.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 14,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.0.0.6"
+      },
+      {
+        "assets": [],
+        "tag": "v2.0.0.5"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 16,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.0.0.4"
+      },
+      {
+        "assets": [],
+        "tag": "v2.0.0.3"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 6,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.0.0.2"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 2,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.0.0.0"
+      }
+    ],
+    "stars": 4,
+    "forks": 1,
+    "watchers": 2
   }
 ]
