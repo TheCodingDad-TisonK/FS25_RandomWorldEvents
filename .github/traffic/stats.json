@@ -3554,5 +3554,186 @@
     "stars": 4,
     "forks": 1,
     "watchers": 2
+  },
+  {
+    "timestamp": "2026-04-25T18:52:35Z",
+    "date": "2026-04-25",
+    "views": {
+      "count": 198,
+      "uniques": 60
+    },
+    "clones": {
+      "count": 532,
+      "uniques": 145
+    },
+    "referrers": [
+      {
+        "referrer": "github.com",
+        "count": 125,
+        "uniques": 39
+      },
+      {
+        "referrer": "Google",
+        "count": 20,
+        "uniques": 6
+      },
+      {
+        "referrer": "symbaloo.com",
+        "count": 3,
+        "uniques": 1
+      },
+      {
+        "referrer": "kingmods.net",
+        "count": 1,
+        "uniques": 1
+      }
+    ],
+    "popular_paths": [
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents",
+        "title": "Overview",
+        "count": 128,
+        "uniques": 58
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases/tag/v2.1.3.0",
+        "title": "/releases/tag/v2.1.3.0",
+        "count": 26,
+        "uniques": 17
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues",
+        "title": "/issues",
+        "count": 21,
+        "uniques": 4
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases",
+        "title": "/releases",
+        "count": 6,
+        "uniques": 5
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/tags",
+        "title": "/tags",
+        "count": 6,
+        "uniques": 2
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues/11",
+        "title": "/issues/11",
+        "count": 5,
+        "uniques": 4
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues/8",
+        "title": "/issues/8",
+        "count": 2,
+        "uniques": 2
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/branches",
+        "title": "/branches",
+        "count": 1,
+        "uniques": 1
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/commits",
+        "title": "/commits",
+        "count": 1,
+        "uniques": 1
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues/2",
+        "title": "/issues/2",
+        "count": 1,
+        "uniques": 1
+      }
+    ],
+    "releases": [
+      {
+        "assets": [
+          {
+            "downloads": 35,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.1.3.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 13,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.1.2.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 15,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.1.1.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 6,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.1.0.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 14,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.0.0.6"
+      },
+      {
+        "assets": [],
+        "tag": "v2.0.0.5"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 16,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.0.0.4"
+      },
+      {
+        "assets": [],
+        "tag": "v2.0.0.3"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 6,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.0.0.2"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 2,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.0.0.0"
+      }
+    ],
+    "stars": 4,
+    "forks": 1,
+    "watchers": 2
   }
 ]
