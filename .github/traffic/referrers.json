@@ -612,5 +612,22 @@
       "count": 2,
       "uniques": 1
     }
+  ],
+  "2026-04-29": [
+    {
+      "referrer": "github.com",
+      "count": 61,
+      "uniques": 30
+    },
+    {
+      "referrer": "Google",
+      "count": 18,
+      "uniques": 4
+    },
+    {
+      "referrer": "symbaloo.com",
+      "count": 2,
+      "uniques": 1
+    }
   ]
 }
