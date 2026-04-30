@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-04-29T12:17:20Z
-**Days tracked:** 23 | **Download snapshots:** 77 (hourly)
+**Last updated:** 2026-04-30T06:26:47Z
+**Days tracked:** 24 | **Download snapshots:** 78 (hourly)
 
 ---
 
@@ -11,10 +11,10 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 103 | 42 |
-| Git Clones | 501 | 143 |
+| Page Views | 85 | 33 |
+| Git Clones | 512 | 143 |
 
-> **Engagement:** 2.4 pages per visitor (14-day avg)
+> **Engagement:** 2.5 pages per visitor (14-day avg)
 
 ---
 
@@ -30,7 +30,7 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 253 of 42 visitors cloned or downloaded (**602.3%**)
+> **14-day conversion:** 253 of 33 visitors cloned or downloaded (**766.6%**)
 >
 > Unique cloners: 143 | Release downloads: 110
 
@@ -43,8 +43,8 @@
 | Channel | Count |
 |---------|-------|
 | Zip Downloads | 110 |
-| Git Clones (14-day) | 501 |
-| **Total Acquisitions** | **611** |
+| Git Clones (14-day) | 512 |
+| **Total Acquisitions** | **622** |
 
 ---
 
@@ -54,8 +54,8 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 61 | 30 |
-| Google | 18 | 4 |
+| github.com | 46 | 21 |
+| Google | 21 | 4 |
 | symbaloo.com | 2 | 1 |
 
 ---
@@ -76,13 +76,14 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/TheCodingDad-TisonK/FS25_RandomWorldEvents` | 79 | 41 |
-| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases/tag/v2.1.3.0` | 13 | 8 |
-| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/tags` | 4 | 2 |
-| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases` | 3 | 3 |
+| `/TheCodingDad-TisonK/FS25_RandomWorldEvents` | 68 | 33 |
+| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases/tag/v2.1.3.0` | 10 | 6 |
+| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/blob/master/CLAUDE.md` | 1 | 1 |
 | `/TheCodingDad-TisonK/FS25_RandomWorldEvents/branches` | 1 | 1 |
 | `/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues` | 1 | 1 |
 | `/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues/11` | 1 | 1 |
+| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases` | 1 | 1 |
+| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/tags` | 1 | 1 |
 | `/TheCodingDad-TisonK/FS25_RandomWorldEvents/tree/development` | 1 | 1 |
 
 ---
