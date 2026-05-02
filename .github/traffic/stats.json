@@ -4584,5 +4584,168 @@
     "stars": 4,
     "forks": 1,
     "watchers": 2
+  },
+  {
+    "timestamp": "2026-05-02T18:58:23Z",
+    "date": "2026-05-02",
+    "views": {
+      "count": 77,
+      "uniques": 31
+    },
+    "clones": {
+      "count": 558,
+      "uniques": 158
+    },
+    "referrers": [
+      {
+        "referrer": "github.com",
+        "count": 43,
+        "uniques": 17
+      },
+      {
+        "referrer": "Google",
+        "count": 17,
+        "uniques": 4
+      },
+      {
+        "referrer": "kingmods.net",
+        "count": 1,
+        "uniques": 1
+      },
+      {
+        "referrer": "symbaloo.com",
+        "count": 1,
+        "uniques": 1
+      }
+    ],
+    "popular_paths": [
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents",
+        "title": "Overview",
+        "count": 62,
+        "uniques": 31
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases/tag/v2.1.3.0",
+        "title": "/releases/tag/v2.1.3.0",
+        "count": 10,
+        "uniques": 6
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/blob/master/CLAUDE.md",
+        "title": "/blob/master/CLAUDE.md",
+        "count": 1,
+        "uniques": 1
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues",
+        "title": "/issues",
+        "count": 1,
+        "uniques": 1
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues/11",
+        "title": "/issues/11",
+        "count": 1,
+        "uniques": 1
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases",
+        "title": "/releases",
+        "count": 1,
+        "uniques": 1
+      },
+      {
+        "path": "/TheCodingDad-TisonK/FS25_RandomWorldEvents/tags",
+        "title": "/tags",
+        "count": 1,
+        "uniques": 1
+      }
+    ],
+    "releases": [
+      {
+        "assets": [
+          {
+            "downloads": 38,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.1.3.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 13,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.1.2.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 15,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.1.1.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 6,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.1.0.0"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 14,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.0.0.6"
+      },
+      {
+        "assets": [],
+        "tag": "v2.0.0.5"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 16,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.0.0.4"
+      },
+      {
+        "assets": [],
+        "tag": "v2.0.0.3"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 6,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.0.0.2"
+      },
+      {
+        "assets": [
+          {
+            "downloads": 2,
+            "name": "FS25_RandomWorldEvents.zip"
+          }
+        ],
+        "tag": "v2.0.0.0"
+      }
+    ],
+    "stars": 4,
+    "forks": 1,
+    "watchers": 2
   }
 ]

@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-05-01T06:20:32Z
-**Days tracked:** 25 | **Download snapshots:** 79 (hourly)
+**Last updated:** 2026-05-02T18:58:36Z
+**Days tracked:** 26 | **Download snapshots:** 80 (hourly)
 
 ---
 
@@ -11,10 +11,10 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 85 | 33 |
-| Git Clones | 512 | 143 |
+| Page Views | 77 | 31 |
+| Git Clones | 558 | 158 |
 
-> **Engagement:** 2.5 pages per visitor (14-day avg)
+> **Engagement:** 2.4 pages per visitor (14-day avg)
 
 ---
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 253 of 33 visitors cloned or downloaded (**766.6%**)
+> **14-day conversion:** 268 of 31 visitors cloned or downloaded (**864.5%**)
 >
-> Unique cloners: 143 | Release downloads: 110
+> Unique cloners: 158 | Release downloads: 110
 
 ---
 
@@ -43,8 +43,8 @@
 | Channel | Count |
 |---------|-------|
 | Zip Downloads | 110 |
-| Git Clones (14-day) | 512 |
-| **Total Acquisitions** | **622** |
+| Git Clones (14-day) | 558 |
+| **Total Acquisitions** | **668** |
 
 ---
 
@@ -54,9 +54,10 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 46 | 21 |
-| Google | 21 | 4 |
-| symbaloo.com | 2 | 1 |
+| github.com | 43 | 17 |
+| Google | 17 | 4 |
+| kingmods.net | 1 | 1 |
+| symbaloo.com | 1 | 1 |
 
 ---
 
@@ -76,15 +77,13 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/TheCodingDad-TisonK/FS25_RandomWorldEvents` | 68 | 33 |
+| `/TheCodingDad-TisonK/FS25_RandomWorldEvents` | 62 | 31 |
 | `/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases/tag/v2.1.3.0` | 10 | 6 |
 | `/TheCodingDad-TisonK/FS25_RandomWorldEvents/blob/master/CLAUDE.md` | 1 | 1 |
-| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/branches` | 1 | 1 |
 | `/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues` | 1 | 1 |
 | `/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues/11` | 1 | 1 |
 | `/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases` | 1 | 1 |
 | `/TheCodingDad-TisonK/FS25_RandomWorldEvents/tags` | 1 | 1 |
-| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/tree/development` | 1 | 1 |
 
 ---
 
