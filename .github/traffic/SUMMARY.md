@@ -1,7 +1,7 @@
 # Repository Traffic Dashboard
 
-**Last updated:** 2026-05-04T18:14:03Z
-**Days tracked:** 28 | **Download snapshots:** 87 (hourly)
+**Last updated:** 2026-05-05T12:01:07Z
+**Days tracked:** 29 | **Download snapshots:** 88 (hourly)
 
 ---
 
@@ -11,8 +11,8 @@
 
 | Metric | 14-Day Total | Unique |
 |--------|-------------|--------|
-| Page Views | 75 | 30 |
-| Git Clones | 598 | 169 |
+| Page Views | 80 | 31 |
+| Git Clones | 631 | 179 |
 
 > **Engagement:** 2.5 pages per visitor (14-day avg)
 
@@ -30,9 +30,9 @@
 
 ![Conversion](charts/conversion.png)
 
-> **14-day conversion:** 282 of 30 visitors cloned or downloaded (**940.0%**)
+> **14-day conversion:** 292 of 31 visitors cloned or downloaded (**941.9%**)
 >
-> Unique cloners: 169 | Release downloads: 113
+> Unique cloners: 179 | Release downloads: 113
 
 ---
 
@@ -43,8 +43,8 @@
 | Channel | Count |
 |---------|-------|
 | Zip Downloads | 113 |
-| Git Clones (14-day) | 598 |
-| **Total Acquisitions** | **711** |
+| Git Clones (14-day) | 631 |
+| **Total Acquisitions** | **744** |
 
 ---
 
@@ -54,8 +54,9 @@
 
 | Source | Views | Unique |
 |--------|-------|--------|
-| github.com | 42 | 16 |
-| Google | 19 | 6 |
+| github.com | 45 | 17 |
+| Google | 20 | 6 |
+| Bing | 1 | 1 |
 | kingmods.net | 1 | 1 |
 
 ---
@@ -76,8 +77,8 @@
 
 | Page | Views | Unique |
 |------|-------|--------|
-| `/TheCodingDad-TisonK/FS25_RandomWorldEvents` | 61 | 30 |
-| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases/tag/v2.1.3.0` | 8 | 4 |
+| `/TheCodingDad-TisonK/FS25_RandomWorldEvents` | 65 | 31 |
+| `/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases/tag/v2.1.3.0` | 9 | 5 |
 | `/TheCodingDad-TisonK/FS25_RandomWorldEvents/issues` | 2 | 2 |
 | `/TheCodingDad-TisonK/FS25_RandomWorldEvents/releases` | 2 | 2 |
 | `/TheCodingDad-TisonK/FS25_RandomWorldEvents/blob/master/CLAUDE.md` | 1 | 1 |
