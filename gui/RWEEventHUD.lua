@@ -77,6 +77,9 @@ function RWEEventHUD.new(rweInstance)
     self.lastBgW = 0
     self.lastBgH = 0
 
+    -- Deferred layout load flag (savegame directory may not be ready at construction time)
+    self.layoutLoaded = false
+
     -- Flash notification queue
     -- Each entry: { text, categoryKey, isPositive, timer }
     self.flashQueue  = {}
@@ -368,6 +371,15 @@ end
 
 function RWEEventHUD:draw()
     if not g_currentMission or not g_currentMission:getIsClient() then return end
+
+    -- Deferred layout load: savegame directory is not available during loadMission00Finished,
+    -- so we wait until the first draw call when missionInfo.savegameDirectory is ready.
+    if not self.layoutLoaded then
+        self.layoutLoaded = true
+        if self:getLayoutPath() then
+            self:loadLayout()
+        end
+    end
 
     if not self.editMode then
         if g_gui and (g_gui:getIsGuiVisible() or g_gui:getIsDialogVisible()) then return end
