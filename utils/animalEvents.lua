@@ -17,7 +17,11 @@ local animalEvents = {}
 -- HELPERS
 -- =====================
 animalEvents.getFarmId = function()
-    return g_currentMission and g_currentMission.player and g_currentMission.player.farmId or 0
+    local farmId = g_currentMission:getFarmId()
+    if farmId == FarmManager.SPECTATOR_FARM_ID then
+        farmId = FarmManager.SINGLEPLAYER_FARM_ID or 1
+    end
+    return farmId
 end
 
 -- Check that at least one animal husbandry exists on the map.

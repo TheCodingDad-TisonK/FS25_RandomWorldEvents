@@ -45,6 +45,7 @@
     <extraSourceFiles>
         <sourceFile filename="RandomWorldEvents.lua"/>
         <sourceFile filename="gui/RWEEventHUD.lua"/>
+        <sourceFile filename="utils/RWEUIHelper.lua"/>
         <sourceFile filename="gui/RWESettingsIntegration.lua"/>
         <sourceFile filename="utils/EffectHooks.lua"/>
         <sourceFile filename="utils/economicEvents.lua"/>
