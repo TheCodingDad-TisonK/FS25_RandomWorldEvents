@@ -9,11 +9,7 @@
 local vehicleEvents = {}
 
 vehicleEvents.getFarmId = function()
-    local farmId = g_currentMission:getFarmId()
-    if farmId == FarmManager.SPECTATOR_FARM_ID then
-        farmId = FarmManager.SINGLEPLAYER_FARM_ID or 1
-    end
-    return farmId
+    return g_currentMission and g_currentMission.player and g_currentMission.player.farmId or 0
 end
 
 vehicleEvents.getVehicle = function()

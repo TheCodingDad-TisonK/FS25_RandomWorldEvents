@@ -707,8 +707,12 @@ function RandomWorldEvents:consoleCommandList(category)
     return string.format("Listed %d events", total)
 end
 
--- Settings are now in ESC > Settings > Random World Events.
+-- Settings: open with Shift+O or this command
 function RandomWorldEvents:consoleCommandSettings()
+    if self.settingsPanel then
+        self.settingsPanel:toggle()
+        return "Settings panel toggled"
+    end
     return "Settings: open ESC > Settings and scroll to 'Random World Events'"
 end
 
@@ -744,13 +748,18 @@ function RandomWorldEvents:loadGUI()
     self.eventHUD = RWEEventHUD.new(self)
     if self.eventHUD then
         self.eventHUD.scale = self.hudScale or 1.0
-        self.eventHUD:loadLayout()
         Logging.info("[RWE] Event HUD created")
     else
         Logging.warning("[RWE] RWEEventHUD not available — HUD disabled")
     end
 
-    -- Settings are injected into ESC > Settings via RWESettingsIntegration (hooks pattern).
+    -- Create the custom settings panel (Shift+O)
+    self.settingsPanel = RWESettingsPanel.new(self)
+    if self.settingsPanel then
+        Logging.info("[RWE] Custom Settings Panel created")
+    end
+
+    -- Settings are also injected into ESC > Settings via RWESettingsIntegration.
     Logging.info("[RWE] GUI ready")
 end
 
@@ -774,10 +783,10 @@ local function load(mission)
         
         -- Store in global namespace BEFORE loading modules
         getfenv(0)["g_RandomWorldEvents"] = rweManager
-        -- Cross-mod bridge: other mods (FarmTablet, CropStress, etc.) detect via mission property
+        -- Cross-mod bridge: other mods detect via mission property
         mission.randomWorldEvents = rweManager
         
-        -- Now load event modules (they need g_RandomWorldEvents to exist)
+        -- Now load event modules
         rweManager:loadEventModules()
 
         -- Mark as initialized
@@ -791,7 +800,7 @@ local function load(mission)
             )
         end
         
-        Logging.info("[RandomWorldEvents] Initialized successfully with " .. rweManager.eventCounter .. " events")
+        Logging.info("[RandomWorldEvents] Initialized successfully")
     end
 end
 
@@ -803,10 +812,22 @@ end
 
 local function delete(mission)
     if rweManager then
+        -- Restore hooked functions before teardown
+        if rweManager._playerInputHookOriginal and PlayerInputComponent then
+            PlayerInputComponent.registerActionEvents = rweManager._playerInputHookOriginal
+        end
+        if rweManager._vehicleInputHookOriginal and InputBinding then
+            InputBinding.endActionEventsModification = rweManager._vehicleInputHookOriginal
+        end
+
         if rweManager.eventHUD then
             rweManager.eventHUD:saveLayout()
             rweManager.eventHUD:delete()
             rweManager.eventHUD = nil
+        end
+        if rweManager.settingsPanel then
+            rweManager.settingsPanel:delete()
+            rweManager.settingsPanel = nil
         end
         rweManager:saveSettings()
         rweManager = nil
@@ -816,27 +837,200 @@ local function delete(mission)
     end
 end
 
-local function keyEvent(mission, unicode, sym, modifier, isDown)
-    if not isDown or not rweManager then return end
+-- =====================
+-- INPUT CALLBACKS
+-- No arguments: FS25 passes none to action callbacks registered via registerActionEvent.
+-- =====================
 
-    if sym == 284 then -- F3 — toggle HUD
-        if rweManager.eventHUD then
-            rweManager.eventHUD:toggleVisibility()
+function RandomWorldEvents:onToggleHUDInput()
+    if self.eventHUD then
+        self.eventHUD:toggleVisibility()
+    end
+end
+
+function RandomWorldEvents:onToggleSettingsInput()
+    if self.settingsPanel then
+        self.settingsPanel:toggle()
+    end
+end
+
+-- =====================
+-- INPUT REGISTRATION
+-- Mirrors the SoilFertilizer pattern:
+--   PLAYER context  → hook PlayerInputComponent.registerActionEvents
+--   VEHICLE context → hook InputBinding.endActionEventsModification
+-- FSBaseMission.registerActionEvents targets the base class and never fires in FS25.
+-- =====================
+
+local function installInputHooks()
+    if not rweManager then return end
+
+    -- ── PLAYER context ────────────────────────────────────────────────────
+    if PlayerInputComponent and PlayerInputComponent.registerActionEvents then
+        local originalPlayerReg = PlayerInputComponent.registerActionEvents
+        rweManager._playerInputHookOriginal = originalPlayerReg
+
+        PlayerInputComponent.registerActionEvents = function(inputComponent, ...)
+            originalPlayerReg(inputComponent, ...)
+
+            -- Only for the local owning player
+            if not (inputComponent.player and inputComponent.player.isOwner) then return end
+            -- Guard against double-registration
+            if g_RandomWorldEvents and g_RandomWorldEvents.hudPlayerEventId then return end
+            if not g_RandomWorldEvents then return end
+
+            g_inputBinding:beginActionEventsModification(PlayerInputComponent.INPUT_CONTEXT_NAME)
+
+            local hudOk, hudId = g_inputBinding:registerActionEvent(
+                InputAction.RWE_TOGGLE_HUD, g_RandomWorldEvents,
+                g_RandomWorldEvents.onToggleHUDInput,
+                false, true, false, true
+            )
+            if hudOk and hudId then
+                g_RandomWorldEvents.hudPlayerEventId = hudId
+                g_inputBinding:setActionEventText(hudId, g_i18n:getText("input_RWE_TOGGLE_HUD") or "Toggle RWE HUD")
+                Logging.info("[RWE] HUD toggle registered in PLAYER context")
+            else
+                Logging.warning("[RWE] HUD toggle PLAYER registration failed")
+            end
+
+            local spOk, spId = g_inputBinding:registerActionEvent(
+                InputAction.RWE_TOGGLE_SETTINGS, g_RandomWorldEvents,
+                g_RandomWorldEvents.onToggleSettingsInput,
+                false, true, false, true
+            )
+            if spOk and spId then
+                g_RandomWorldEvents.settingsPlayerEventId = spId
+                g_inputBinding:setActionEventText(spId, g_i18n:getText("input_RWE_TOGGLE_SETTINGS") or "RWE Settings")
+                Logging.info("[RWE] Settings toggle registered in PLAYER context")
+            else
+                Logging.warning("[RWE] Settings toggle PLAYER registration failed")
+            end
+
+            g_inputBinding:endActionEventsModification()
         end
-    elseif sym == 290 then -- F9 — force-trigger a random event
-        rweManager:triggerRandomEvent()
+        Logging.info("[RWE] PlayerInputComponent hook installed")
+    end
+
+    -- ── VEHICLE context ───────────────────────────────────────────────────
+    if InputBinding and InputBinding.endActionEventsModification then
+        local _rweVehicleHookActive = false
+        local originalEndMod = InputBinding.endActionEventsModification
+        rweManager._vehicleInputHookOriginal = originalEndMod
+
+        InputBinding.endActionEventsModification = function(binding, ignoreCheck)
+            -- Capture context name BEFORE the original resets it
+            local contextName = ""
+            if binding.registrationContext and
+               binding.registrationContext ~= InputBinding.NO_REGISTRATION_CONTEXT then
+                contextName = binding.registrationContext.name or ""
+            end
+
+            originalEndMod(binding, ignoreCheck)
+
+            if contextName ~= Vehicle.INPUT_CONTEXT_NAME then return end
+            if _rweVehicleHookActive then return end
+            if not g_RandomWorldEvents then return end
+
+            _rweVehicleHookActive = true
+
+            -- Remove stale event IDs to prevent duplicate callbacks
+            local mgr = g_RandomWorldEvents
+            local staleIds = {
+                "hudVehicleEventId", "settingsVehicleEventId",
+                "hudPlayerEventId",  "settingsPlayerEventId",
+            }
+            for _, field in ipairs(staleIds) do
+                local oldId = mgr[field]
+                if oldId then
+                    pcall(function() binding:removeActionEvent(oldId) end)
+                    mgr[field] = nil
+                end
+            end
+
+            -- Register in VEHICLE context
+            binding:beginActionEventsModification(Vehicle.INPUT_CONTEXT_NAME)
+
+            local vHudOk, vHudId = binding:registerActionEvent(
+                InputAction.RWE_TOGGLE_HUD, mgr,
+                mgr.onToggleHUDInput,
+                false, true, false, true
+            )
+            if vHudOk and vHudId then
+                mgr.hudVehicleEventId = vHudId
+                binding:setActionEventText(vHudId, g_i18n:getText("input_RWE_TOGGLE_HUD") or "Toggle RWE HUD")
+                Logging.debug("[RWE] HUD toggle registered in VEHICLE context")
+            end
+
+            local vSpOk, vSpId = binding:registerActionEvent(
+                InputAction.RWE_TOGGLE_SETTINGS, mgr,
+                mgr.onToggleSettingsInput,
+                false, true, false, true
+            )
+            if vSpOk and vSpId then
+                mgr.settingsVehicleEventId = vSpId
+                binding:setActionEventTextVisibility(vSpId, false)
+                Logging.debug("[RWE] Settings toggle registered in VEHICLE context")
+            end
+
+            binding:endActionEventsModification()
+
+            -- Re-register PLAYER context (invalidated as a side-effect of removeActionEvent above)
+            binding:beginActionEventsModification(PlayerInputComponent.INPUT_CONTEXT_NAME)
+
+            local pHudOk, pHudId = binding:registerActionEvent(
+                InputAction.RWE_TOGGLE_HUD, mgr,
+                mgr.onToggleHUDInput,
+                false, true, false, true
+            )
+            if pHudOk and pHudId then
+                mgr.hudPlayerEventId = pHudId
+                binding:setActionEventText(pHudId, g_i18n:getText("input_RWE_TOGGLE_HUD") or "Toggle RWE HUD")
+                Logging.debug("[RWE] HUD toggle re-registered in PLAYER context after vehicle exit")
+            end
+
+            local pSpOk, pSpId = binding:registerActionEvent(
+                InputAction.RWE_TOGGLE_SETTINGS, mgr,
+                mgr.onToggleSettingsInput,
+                false, true, false, true
+            )
+            if pSpOk and pSpId then
+                mgr.settingsPlayerEventId = pSpId
+                binding:setActionEventTextVisibility(pSpId, false)
+                Logging.debug("[RWE] Settings toggle re-registered in PLAYER context after vehicle exit")
+            end
+
+            binding:endActionEventsModification()
+
+            _rweVehicleHookActive = false
+        end
+        Logging.info("[RWE] InputBinding.endActionEventsModification hooked for VEHICLE context")
     end
 end
 
 local function draw(mission)
-    if rweManager and rweManager.eventHUD then
-        rweManager.eventHUD:draw()
+    if rweManager then
+        -- Only draw overlays when no other GUI is visible (pause menu, shop, etc)
+        if g_gui and not g_gui:getIsGuiVisible() then
+            if rweManager.eventHUD then
+                rweManager.eventHUD:draw()
+            end
+            if rweManager.settingsPanel then
+                rweManager.settingsPanel:draw()
+            end
+        end
     end
 end
 
 local function mouseEvent(mission, posX, posY, isDown, isUp, button)
-    if rweManager and rweManager.eventHUD then
-        rweManager.eventHUD:onMouseEvent(posX, posY, isDown, isUp, button)
+    if rweManager then
+        if rweManager.settingsPanel and rweManager.settingsPanel.isOpen then
+            rweManager.settingsPanel:onMouseEvent(posX, posY, isDown, isUp, button)
+            return true -- consumed — base game camera never sees this
+        end
+        if rweManager.eventHUD then
+            rweManager.eventHUD:onMouseEvent(posX, posY, isDown, isUp, button)
+        end
     end
 end
 
@@ -844,6 +1038,8 @@ local function loadFinished(mission, ...)
     if rweManager and not rweManager.guiLoaded then
         rweManager:loadGUI()
         rweManager.guiLoaded = true
+        -- Install input hooks after GUI is ready (settingsPanel must exist first)
+        installInputHooks()
     end
 end
 
@@ -852,9 +1048,8 @@ Mission00.load = Utils.prependedFunction(Mission00.load, load)
 Mission00.loadMission00Finished = Utils.appendedFunction(Mission00.loadMission00Finished, loadFinished)
 FSBaseMission.update     = Utils.appendedFunction(FSBaseMission.update,     update)
 FSBaseMission.draw       = Utils.appendedFunction(FSBaseMission.draw,       draw)
-FSBaseMission.mouseEvent = Utils.appendedFunction(FSBaseMission.mouseEvent, mouseEvent)
+FSBaseMission.mouseEvent = Utils.prependedFunction(FSBaseMission.mouseEvent, mouseEvent)
 FSBaseMission.delete     = Utils.appendedFunction(FSBaseMission.delete,     delete)
-FSBaseMission.keyEvent   = Utils.appendedFunction(FSBaseMission.keyEvent,   keyEvent)
 
 Logging.info("========================================")
 Logging.info("   FS25 Random World Events v2.1.3.0   ")
