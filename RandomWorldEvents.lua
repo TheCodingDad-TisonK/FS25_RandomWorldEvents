@@ -819,6 +819,7 @@ end
 -- =====================
 
 local rweManager
+local installInputHooks  -- forward declaration: defined below load/update, called from load
 
 local function load(mission)
     if rweManager == nil then
@@ -918,7 +919,7 @@ end
 -- FSBaseMission.registerActionEvents targets the base class and never fires in FS25.
 -- =====================
 
-local function installInputHooks()
+installInputHooks = function()
     if not rweManager then return end
 
     -- ── PLAYER context ────────────────────────────────────────────────────
