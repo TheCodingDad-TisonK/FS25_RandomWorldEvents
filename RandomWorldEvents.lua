@@ -996,13 +996,13 @@ installInputHooks = function()
 
             _rweVehicleHookActive = true
 
-            -- Remove stale event IDs to prevent duplicate callbacks
+            -- Only remove vehicle-context IDs. Player-context IDs were registered
+            -- once at loadFinished and must NOT be cleared here — doing so forces
+            -- re-registration which creates fresh event IDs and discards the user's
+            -- saved key binding, causing the "must rebind every session" issue.
             local mgr = g_RandomWorldEvents
-            local staleIds = {
-                "hudVehicleEventId", "settingsVehicleEventId",
-                "hudPlayerEventId",  "settingsPlayerEventId",
-            }
-            for _, field in ipairs(staleIds) do
+            local staleVehicleIds = { "hudVehicleEventId", "settingsVehicleEventId" }
+            for _, field in ipairs(staleVehicleIds) do
                 local oldId = mgr[field]
                 if oldId then
                     pcall(function() binding:removeActionEvent(oldId) end)
@@ -1037,33 +1037,6 @@ installInputHooks = function()
 
             binding:endActionEventsModification()
 
-            -- Re-register PLAYER context (invalidated as a side-effect of removeActionEvent above)
-            binding:beginActionEventsModification(PlayerInputComponent.INPUT_CONTEXT_NAME)
-
-            local pHudOk, pHudId = binding:registerActionEvent(
-                InputAction.RWE_TOGGLE_HUD, mgr,
-                mgr.onToggleHUDInput,
-                false, true, false, true
-            )
-            if pHudOk and pHudId then
-                mgr.hudPlayerEventId = pHudId
-                binding:setActionEventText(pHudId, g_i18n:getText("input_RWE_TOGGLE_HUD") or "Toggle RWE HUD")
-                Logging.debug("[RWE] HUD toggle re-registered in PLAYER context after vehicle exit")
-            end
-
-            local pSpOk, pSpId = binding:registerActionEvent(
-                InputAction.RWE_TOGGLE_SETTINGS, mgr,
-                mgr.onToggleSettingsInput,
-                false, true, false, true
-            )
-            if pSpOk and pSpId then
-                mgr.settingsPlayerEventId = pSpId
-                binding:setActionEventTextVisibility(pSpId, false)
-                Logging.debug("[RWE] Settings toggle re-registered in PLAYER context after vehicle exit")
-            end
-
-            binding:endActionEventsModification()
-
             _rweVehicleHookActive = false
         end
         Logging.info("[RWE] InputBinding.endActionEventsModification hooked for VEHICLE context")
@@ -1072,14 +1045,16 @@ end
 
 local function draw(mission)
     if rweManager then
-        -- Only draw overlays when no other GUI is visible (pause menu, shop, etc)
+        -- HUD only draws when no GUI/menu is open
         if g_gui and not g_gui:getIsGuiVisible() then
             if rweManager.eventHUD then
                 rweManager.eventHUD:draw()
             end
-            if rweManager.settingsPanel then
-                rweManager.settingsPanel:draw()
-            end
+        end
+        -- Settings panel draws independently — it has its own isOpen guard
+        -- and must always render when open so hitboxes are rebuilt each frame
+        if rweManager.settingsPanel then
+            rweManager.settingsPanel:draw()
         end
     end
 end
